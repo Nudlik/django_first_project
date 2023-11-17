@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from catalog.utils import format_to_row
 from .models import Product, Contact
@@ -42,7 +42,7 @@ def contacts(request: HttpRequest) -> HttpResponse:
         message = form_data.get('message')
         print(name, phone, message)
 
-    contacts_ = Contact.objects.get(pk=1)
+    contacts_ = get_object_or_404(Contact, pk=1)
 
     data = {
         'url': '/contacts/',
