@@ -49,3 +49,17 @@ class Category(models.Model):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         ordering = ['title']
+
+
+class Contact(models.Model):
+    city = models.CharField(max_length=50, verbose_name='Город')
+    inn = models.CharField(max_length=50, unique=True, verbose_name='ИНН')
+    address = models.CharField(max_length=255, verbose_name='Адрес')
+
+    def __str__(self):
+        return f'({self.inn}'
+
+    class Meta:
+        verbose_name = 'Контакт'
+        verbose_name_plural = 'Контакты'
+        ordering = ['city']

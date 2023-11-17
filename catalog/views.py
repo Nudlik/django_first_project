@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from catalog.utils import format_to_row
-from .models import Product
+from .models import Product, Contact
 
 menu = [
     {'title': 'Каталог', 'url_name': 'home'},
@@ -41,14 +41,15 @@ def contacts(request: HttpRequest) -> HttpResponse:
         phone = form_data.get('phone')
         message = form_data.get('message')
         print(name, phone, message)
-    elif request.method == 'GET':
-        data_contacts = []
+
+    contacts_ = Contact.objects.get(pk=1)
 
     data = {
         'url': '/contacts/',
         'title': 'Контакты',
         'description': '',
         'menu': menu,
+        'contacts': contacts_,
     }
 
     return render(request, 'catalog/contacts.html', context=data)
