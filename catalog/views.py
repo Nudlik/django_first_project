@@ -1,45 +1,38 @@
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from catalog.utils import create_product, format_to_row
+from catalog.utils import format_to_row
+from .models import Product
 
-url_list = {}
-
-
-def append_url_list(url, title, description):
-    url_list[url] = [title, description]
-
-    def wrapper(func):
-        def inner(request, *args, **kwargs):
-            return func(request, *args, **kwargs)
-
-        return inner
-
-    return wrapper
+menu = [
+    {'title': 'Каталог', 'url_name': 'home'},
+    {'title': 'Контакты', 'url_name': 'contacts'},
+]
 
 
-# Create your views here.
-@append_url_list(url='/',
-                 title='Каталог',
-                 description='Skystore - это отличный вариант хранения ваших вещей '
-                             'и примеров товаров, который вы бы хотели продать',
-                 )
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой домашнюю страницу с каталогом продуктов """
 
     if request.method == 'POST':
         products_ids = request.POST.getlist('product_ids')
         print('Пользователь выбрал продукты с ID:', ', '.join(products_ids))
 
-    random_products = create_product()
-    formatted_products = format_to_row(random_products, 4)
-    return render(request, 'catalog/index.html', {'lst': url_list, 'products': formatted_products})
+    products = Product.published.all().order_by('-time_update')
+    formatted_products = format_to_row(products, 4)
+
+    data = {
+        'url': '/',
+        'title': 'Каталог',
+        'description': 'Skystore - это отличный вариант хранения ваших вещей '
+                       'и примеров товаров, который вы бы хотели продать',
+        'menu': menu,
+        'products': formatted_products
+    }
+
+    return render(request, 'catalog/index.html', context=data)
 
 
-@append_url_list(url='/contacts/',
-                 title='Контакты',
-                 description='',
-                 )
-def contacts(request):
+def contacts(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой страницу с контактами для обратной связи """
 
     if request.method == 'POST':
@@ -48,5 +41,14 @@ def contacts(request):
         phone = form_data.get('phone')
         message = form_data.get('message')
         print(name, phone, message)
+    elif request.method == 'GET':
+        data_contacts = []
 
-    return render(request, 'catalog/contacts.html', {'lst': url_list})
+    data = {
+        'url': '/contacts/',
+        'title': 'Контакты',
+        'description': '',
+        'menu': menu,
+    }
+
+    return render(request, 'catalog/contacts.html', context=data)
