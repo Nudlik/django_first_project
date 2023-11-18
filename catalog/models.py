@@ -57,7 +57,7 @@ class Contact(models.Model):
     address = models.CharField(max_length=255, verbose_name='Адрес')
 
     def __str__(self):
-        return f'({self.inn}'
+        return f'({self.pk}){self.inn}'
 
     class Meta:
         verbose_name = 'Контакт'
