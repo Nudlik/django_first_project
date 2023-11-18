@@ -1,8 +1,8 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 
 from catalog.utils import format_to_row
-from .models import Product, Contact
+from .models import Product
 
 menu = [
     {'title': 'Каталог', 'url_name': 'home'},
