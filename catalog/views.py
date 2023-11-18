@@ -42,22 +42,11 @@ def contacts(request: HttpRequest) -> HttpResponse:
         message = form_data.get('message')
         print(name, phone, message)
 
-    contacts_ = Contact.objects.filter(pk=1)
-    if len(contacts_) == 1:
-        contact = {
-            'city': contacts_[0].city,
-            'inn': contacts_[0].inn,
-            'address': contacts_[0].address,
-        }
-    else:
-        contact = None
-
     data = {
         'url': '/contacts/',
         'title': 'Контакты',
         'description': '',
         'menu': menu,
-        'contacts': contact,
     }
 
     return render(request, 'catalog/contacts.html', context=data)

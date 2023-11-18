@@ -1,27 +1,11 @@
 {% extends 'catalog/base.html' %}
+{% load custom_tags %}
 
 {% block content %}
     <div class="row text-start">
-        <div class="col-lg-9 col-md-6 col-sm-12">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <table class="table table-striped">
-                        <tr>
-                            <td class="w-25">Страна</td>
-                            <td>{{ contacts.city|default:'Заполни БД дружок :)' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-25">ИНН</td>
-                            <td>{{ contacts.inn|default:'Заполни БД дружок :)' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="w-25">Адрес</td>
-                            <td>{{ contacts.address|default:'Заполни БД дружок :)' }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
+
+        {% contact_info %}
+
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-header">
