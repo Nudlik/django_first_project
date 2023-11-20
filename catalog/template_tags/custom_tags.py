@@ -13,7 +13,7 @@ def get_item(iterable: dict, key):
 
 @register.filter
 def list_breaks(string: str):
-    lst = string.replace('[\'', '').replace('\']', '').split('\', \'')
+    lst = eval(string)
     return lst
 
 
@@ -21,7 +21,7 @@ def list_breaks(string: str):
 def contact_info():
     contacts = Contact.objects.filter(pk=1)
 
-    if len(contacts) == 1:
+    if contacts.exists():
         contact = {
             'city': contacts[0].city,
             'inn': contacts[0].inn,
