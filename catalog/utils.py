@@ -58,7 +58,7 @@ def create_product(size: int = 10) -> tuple:
 
         dict_product['title'] = product_title[0]
         dict_product['price'] = product_price[0]
-        dict_product['description'] = product_description
+        dict_product['description'] = ';'.join(product_description)
         dict_product['category'] = category_title
         res_products.append(dict_product)
 

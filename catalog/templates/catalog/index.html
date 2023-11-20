@@ -2,32 +2,4 @@
 
 {% block content %}
 
-    <form method="post" id="selected_product" action="">
-    {% csrf_token %}
-    </form>
-
-    {% for row in products %}
-    <div class="row text-center">
-    {% for product in row %}
-        <div class="col-3">
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h4 class="my-0 font-weight-normal">{{ product.title }}</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$ {{ product.price }}</h1>
-                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                        {% for desc in product.description|list_breaks %}
-                        <li>- {{ desc }}</li>
-                        {% endfor %}
-                    </ul>
-                    <input type="checkbox" class="btn btn-lg btn-block btn-outline-primary"
-                           form="selected_product" name="product_ids" value="{{ product.id }}">Выбрать</input>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-    {% endfor %}
-    <button type="submit" class="btn btn-lg btn-block btn-outline-primary" form="selected_product">Заказать</button>
 {% endblock %}

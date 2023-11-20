@@ -1,16 +1,28 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from catalog.utils import format_to_row
 from .models import Product
 
 menu = [
-    {'title': 'Каталог', 'url_name': 'home'},
+    {'title': 'Главная', 'url_name': 'home'},
+    {'title': 'Каталог', 'url_name': 'catalog'},
     {'title': 'Контакты', 'url_name': 'contacts'},
 ]
 
 
 def index(request: HttpRequest) -> HttpResponse:
+
+    data = {
+        'url': '/',
+        'title': 'Главная страница сайта',
+        'description': 'Skystore - это интернет-магазин',
+        'menu': menu,
+    }
+
+    return render(request, 'catalog/index.html', context=data)
+
+
+def catalog(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой домашнюю страницу с каталогом продуктов """
 
     if request.method == 'POST':
@@ -18,18 +30,17 @@ def index(request: HttpRequest) -> HttpResponse:
         print('Пользователь выбрал продукты с ID:', ', '.join(products_ids))
 
     products = Product.published.all().order_by('-time_update')
-    formatted_products = format_to_row(products, 4)
 
     data = {
-        'url': '/',
+        'url': 'catalog/',
         'title': 'Каталог',
         'description': 'Skystore - это отличный вариант хранения ваших вещей '
                        'и примеров товаров, который вы бы хотели продать',
         'menu': menu,
-        'products': formatted_products
+        'products': products
     }
 
-    return render(request, 'catalog/index.html', context=data)
+    return render(request, 'catalog/catalog.html', context=data)
 
 
 def contacts(request: HttpRequest) -> HttpResponse:

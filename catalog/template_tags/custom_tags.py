@@ -13,8 +13,7 @@ def get_item(iterable: dict, key):
 
 @register.filter
 def list_breaks(string: str):
-    lst = eval(string)
-    return lst
+    return string.split(';')
 
 
 @register.inclusion_tag('catalog/includes/contact_info.html')
