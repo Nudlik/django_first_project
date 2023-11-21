@@ -15,6 +15,9 @@ class AddProductForm(forms.Form):
                                   required=False,
                                   label='Описание',
                                   )
+    photo = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control'}),
+                             required=False,
+                             )
     category = forms.ModelChoiceField(queryset=Category.objects.all(),
                                       empty_label='Категория не выбрана',
                                       label='Категория',

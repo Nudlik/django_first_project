@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -30,6 +31,9 @@ def catalog(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой домашнюю страницу с каталогом продуктов """
 
     products = Product.published.all().order_by('-time_update')
+    paginator = Paginator(products, per_page=6)
+    page_id = request.GET.get('page')
+    page = paginator.get_page(page_id)
 
     data = {
         'url': 'catalog/',
@@ -37,7 +41,7 @@ def catalog(request: HttpRequest) -> HttpResponse:
         'description': 'Skystore - это отличный вариант хранения ваших вещей '
                        'и примеров товаров, который вы бы хотели продать',
         'menu': menu,
-        'products': products
+        'products': page,
     }
 
     return render(request, 'catalog/catalog.html', context=data)
@@ -115,12 +119,13 @@ def add_product(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой страницу добавления продукта """
 
     if request.method == 'POST':
-        form = AddProductForm(request.POST)
+        form = AddProductForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 Product.objects.create(**form.cleaned_data)
                 return redirect('catalog')
             except Exception as e:
+                print(e)
                 form.add_error(None, f'Ошибка добавления продукта: {e}')
     else:
         form = AddProductForm()
