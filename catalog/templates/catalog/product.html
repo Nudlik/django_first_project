@@ -1,0 +1,74 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title">О товаре:</h3>
+                    <small class="text-body-secondary">Категория: <a
+                            href="{{ product.category.get_absolute_url }}"
+                            class="text-warning">{{ product.category }}</a></small><br>
+                    <small class="text-body-secondary">Обновлено: {{ product.time_update|date:'d-m-Y H:i:s' }}</small><br><br>
+                    <strong>Название:</strong>
+                    <ul>
+                        <li>{{ product.title }}</li>
+                    </ul>
+                    <strong>Описание:</strong>
+                    <ul>
+                        {% for d in product.description|list_breaks %}
+                            <li>{{ d }}</li>
+                        {% endfor %}
+                    </ul>
+                    <strong>Цена:</strong>
+                    <ul>
+                        <li>{{ product.price }} $</li>
+                    </ul>
+                    <form method="post" action="{{ product.get_absolute_url }}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-warning" name="button_buy"
+                                value="{{ product.pk }}">Купить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+
+                    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for i in '123' %}
+                                <div class="carousel-item active">
+                                    <svg class="d-block w-100" width="100%" height="180"
+                                         xmlns="http://www.w3.org/2000/svg" role="img"
+                                         aria-label="Placeholder: Заглушка изображения"
+                                         preserveAspectRatio="xMidYMid slice" focusable="false">
+                                        <rect width="200%" height="200%" fill="#868e96"></rect>
+                                        <text x="35%" y="50%" fill="#dee2e6" dy=".3em">Заглушка изображения</text>
+                                    </svg>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+                                data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Предыдущий</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+                                data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Следующий</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

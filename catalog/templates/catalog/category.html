@@ -1,0 +1,27 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+    <div class="card h-100">
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Категория</th>
+                    <th scope="col">Описание</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cat in category %}
+                    <tr>
+                        <th scope="row">{{ cat.id }}</th>
+                        <td><a href="{{ cat.get_absolute_url }}" class="text-warning">{{ cat.title }}</a></td>
+                        <td>{{ cat.description|default:'разраб не удосужился заполнить бд'|truncatechars:50 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,16 +1,19 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
-from .models import Product
+from .models import Product, Category
 
 menu = [
     {'title': 'Главная', 'url_name': 'home'},
     {'title': 'Каталог', 'url_name': 'catalog'},
+    {'title': 'Категории', 'url_name': 'category'},
+    {'title': 'Добавить продукт', 'url_name': 'add_product'},
     {'title': 'Контакты', 'url_name': 'contacts'},
 ]
 
 
 def index(request: HttpRequest) -> HttpResponse:
+    """ Функция представляет собой домашнюю страницу с главной страницей """
 
     data = {
         'url': '/',
@@ -24,10 +27,6 @@ def index(request: HttpRequest) -> HttpResponse:
 
 def catalog(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой домашнюю страницу с каталогом продуктов """
-
-    if request.method == 'POST':
-        products_ids = request.POST.getlist('product_ids')
-        print('Пользователь выбрал продукты с ID:', ', '.join(products_ids))
 
     products = Product.published.all().order_by('-time_update')
 
@@ -61,3 +60,62 @@ def contacts(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, 'catalog/contacts.html', context=data)
+
+
+def show_product(request: HttpRequest, product_id: int) -> HttpResponse:
+    """ Функция представляет собой страницу с конкретным продуктом """
+
+    if request.method == 'POST':
+        if request.POST.get('button_buy'):
+            product = Product.objects.get(pk=product_id)
+            print(f'Пользователь нажал на кнопку купить: {product}')
+
+    only_product = get_object_or_404(Product, pk=product_id)
+
+    data = {
+        'title': f'Страница с описанием продукта: {only_product.title}',
+        'menu': menu,
+        'product': only_product,
+    }
+
+    return render(request, 'catalog/product.html', context=data)
+
+
+def show_category(request: HttpRequest) -> HttpResponse:
+    """ Функция представляет собой страницу с категорией продуктов """
+
+    category = Category.objects.all().order_by('pk')
+
+    data = {
+        'title': 'Категории',
+        'menu': menu,
+        'category': category,
+    }
+
+    return render(request, 'catalog/category.html', context=data)
+
+
+def category_by_id(request: HttpRequest, category_id: int) -> HttpResponse:
+    """ Функция представляет собой страницу с категорией продуктов """
+
+    category = get_object_or_404(Category, pk=category_id)
+    products = Product.objects.filter(category=category)
+
+    data = {
+        'title': f'Категория: {category.title}',
+        'menu': menu,
+        'products': products,
+    }
+
+    return render(request, 'catalog/list_category.html', context=data)
+
+
+def add_product(request: HttpRequest) -> HttpResponse:
+    """ Функция представляет собой страницу добавления продукта """
+
+    data = {
+        'title': 'Добавить продукт',
+        'menu': menu,
+    }
+
+    return render(request, 'catalog/add_product.html', context=data)

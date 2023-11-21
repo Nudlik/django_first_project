@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -37,6 +38,9 @@ class Product(models.Model):
         verbose_name_plural = 'Продукты'
         ordering = ['-time_create']
 
+    def get_absolute_url(self):
+        return reverse('product', kwargs={'product_id': self.pk})
+
 
 class Category(models.Model):
     title = models.CharField(max_length=255, verbose_name='Название')
@@ -49,6 +53,9 @@ class Category(models.Model):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         ordering = ['title']
+
+    def get_absolute_url(self):
+        return reverse('category_by_id', kwargs={'category_id': self.pk})
 
 
 class Contact(models.Model):
