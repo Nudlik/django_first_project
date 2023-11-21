@@ -21,11 +21,11 @@ def contact_info():
     contacts = Contact.objects.filter(pk=1)
 
     if contacts.exists():
-        contact = {
-            'city': contacts[0].city,
-            'inn': contacts[0].inn,
-            'address': contacts[0].address,
-        }
+        contact = (
+            ('Страна', contacts[0].city),
+            ('ИНН', contacts[0].inn),
+            ('Адрес', contacts[0].address),
+        )
     else:
         contact = None
 

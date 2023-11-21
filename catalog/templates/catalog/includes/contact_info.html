@@ -2,18 +2,12 @@
     <div class="card mb-4 box-shadow">
         <div class="card-body">
             <table class="table table-striped">
+                {% for item in contacts %}
                 <tr>
-                    <td class="w-25">Страна</td>
-                    <td>{{ contacts.city|default:'Заполни БД дружок :)' }}</td>
+                    <td class="w-25">{{ item.0 }}</td>
+                    <td>{{ item.1|default:'Заполни БД дружок :)' }}</td>
                 </tr>
-                <tr>
-                    <td class="w-25">ИНН</td>
-                    <td>{{ contacts.inn|default:'Заполни БД дружок :)' }}</td>
-                </tr>
-                <tr>
-                    <td class="w-25">Адрес</td>
-                    <td>{{ contacts.address|default:'Заполни БД дружок :)' }}</td>
-                </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
