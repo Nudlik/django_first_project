@@ -9,6 +9,8 @@
                     <th scope="col">id</th>
                     <th scope="col">Категория</th>
                     <th scope="col">Описание</th>
+                    <th scope="col">Кол-во товаров</th>
+                    <th scope="col">Товаров на сумму</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -17,6 +19,8 @@
                         <th scope="row">{{ cat.id }}</th>
                         <td><a href="{{ cat.get_absolute_url }}" class="text-warning">{{ cat.title }}</a></td>
                         <td>{{ cat.description|default:'разраб не удосужился заполнить бд'|truncatechars:50 }}</td>
+                        <td>{{ cat.total_products }}</td>
+                        <td>{{ cat.total_price }} $</td>
                     </tr>
                 {% endfor %}
                 </tbody>

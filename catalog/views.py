@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.db.models import Sum, Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -61,7 +62,7 @@ def contacts(request: HttpRequest) -> HttpResponse:
     data = {
         'url': '/contacts/',
         'title': 'Контакты',
-        'description': '',
+        'description': 'Мы всегда рады обратной связи',
         'menu': menu,
     }
 
@@ -90,10 +91,13 @@ def show_product(request: HttpRequest, product_id: int) -> HttpResponse:
 def show_category(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой страницу с категорией продуктов """
 
-    category = Category.objects.all().order_by('pk')
+    category = Category.objects.annotate(total_products=Count('products'),
+                                         total_price=Sum('products__price')
+                                         ).order_by('pk')
 
     data = {
         'title': 'Категории',
+        'description': 'Таблица всех категорий продуктов на сайте',
         'menu': menu,
         'category': category,
     }
@@ -137,6 +141,7 @@ def add_product(request: HttpRequest) -> HttpResponse:
 
     data = {
         'title': 'Добавить продукт',
+        'description': 'Здесь можно добавить новый продукт, чтобы он появился на сайте',
         'menu': menu,
         'form': form,
     }
