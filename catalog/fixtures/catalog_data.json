@@ -145,11 +145,25 @@
     "fields": {
         "title": "Картина",
         "description": "Красивая;Живопись;Размер 20х40",
-        "photo": "",
+        "photo": "photos/kartina.jfif",
         "category": 3,
         "price": "9.99",
         "time_create": "2023-11-21T11:39:50.485Z",
-        "time_update": "2023-11-21T11:39:50.485Z",
+        "time_update": "2023-11-21T12:06:02.352Z",
+        "is_published": true
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 12,
+    "fields": {
+        "title": "Носки",
+        "description": "Универсальные;Теплые;Модные;Мягкие",
+        "photo": "photos/noski.jfif",
+        "category": 2,
+        "price": "2.99",
+        "time_create": "2023-11-21T12:30:48.391Z",
+        "time_update": "2023-11-21T12:30:48.391Z",
         "is_published": true
     }
 },
