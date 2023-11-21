@@ -30,3 +30,8 @@ def contact_info():
         contact = None
 
     return {'contacts': contact}
+
+
+@register.inclusion_tag('catalog/includes/button_navigation.html', name='btn_nav')
+def button_navigation(products):
+    return {'products': products}

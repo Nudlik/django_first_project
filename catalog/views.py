@@ -106,10 +106,14 @@ def category_by_id(request: HttpRequest, category_id: int) -> HttpResponse:
     category = get_object_or_404(Category, pk=category_id)
     products = Product.objects.filter(category=category)
 
+    paginator = Paginator(products, per_page=1)
+    page_id = request.GET.get('page')
+    page = paginator.get_page(page_id)
+
     data = {
         'title': f'Категория: {category.title}',
         'menu': menu,
-        'products': products,
+        'products': page,
     }
 
     return render(request, 'catalog/list_category.html', context=data)

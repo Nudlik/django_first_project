@@ -40,32 +40,6 @@
         {% endfor %}
     </div>
 
-    <nav aria-label="Пример навигации по страницам" class="mt-4 sticky-bottom border-top pt-4 pb-3" style="backdrop-filter: blur(5px); background-color: rgba(33, 37, 41, 0.85)">
-        <ul class="pagination justify-content-center">
-        {% if products.has_previous %}
-            <li class="page-item ">
-                <a class="page-link text-warning" href="?page={{ products.previous_page_number }}">Предыдущая</a>
-            </li>
-            {% else %}
-            <li class="page-item disabled">
-                <a class="page-link" href="#">Предыдущая</a>
-            </li>
-        {% endif %}
-
-            {% for p in products.paginator.page_range %}
-            <li class="page-item"><a class="page-link {% if products.number == p %} text-bg-warning {% else %} text-warning-emphasis {% endif %}" href="?page={{ p }}">{{ p }}</a></li>
-            {% endfor %}
-
-        {% if products.has_next %}
-            <li class="page-item">
-                <a class="page-link text-warning" href="?page={{ products.next_page_number }}">Следующая</a>
-            </li>
-            {% else %}
-            <li class="page-item disabled">
-                <a class="page-link" href="#">Следующая</a>
-            </li>
-        {% endif %}
-        </ul>
-    </nav>
+    {% btn_nav products %}
 
 {% endblock %}
