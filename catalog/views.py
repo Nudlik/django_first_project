@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import AddProductForm
 from .models import Product, Category
@@ -117,7 +117,11 @@ def add_product(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = AddProductForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
+            try:
+                Product.objects.create(**form.cleaned_data)
+                return redirect('catalog')
+            except Exception as e:
+                form.add_error(None, f'Ошибка добавления продукта: {e}')
     else:
         form = AddProductForm()
 

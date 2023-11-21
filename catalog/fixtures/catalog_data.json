@@ -140,6 +140,20 @@
     }
 },
 {
+    "model": "catalog.product",
+    "pk": 11,
+    "fields": {
+        "title": "Картина",
+        "description": "Красивая;Живопись;Размер 20х40",
+        "photo": "",
+        "category": 3,
+        "price": "9.99",
+        "time_create": "2023-11-21T11:39:50.485Z",
+        "time_update": "2023-11-21T11:39:50.485Z",
+        "is_published": true
+    }
+},
+{
     "model": "catalog.category",
     "pk": 1,
     "fields": {
