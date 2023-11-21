@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
+from .forms import AddProductForm
 from .models import Product, Category
 
 menu = [
@@ -113,9 +114,17 @@ def category_by_id(request: HttpRequest, category_id: int) -> HttpResponse:
 def add_product(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой страницу добавления продукта """
 
+    if request.method == 'POST':
+        form = AddProductForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+    else:
+        form = AddProductForm()
+
     data = {
         'title': 'Добавить продукт',
         'menu': menu,
+        'form': form,
     }
 
     return render(request, 'catalog/add_product.html', context=data)
