@@ -31,7 +31,7 @@ def index(request: HttpRequest) -> HttpResponse:
 def catalog(request: HttpRequest) -> HttpResponse:
     """ Функция представляет собой домашнюю страницу с каталогом продуктов """
 
-    products = Product.published.all().order_by('-time_update')
+    products = Product.published.all().order_by('-time_update').select_related('category')
 
     paginator = Paginator(products, per_page=6)
     page_id = request.GET.get('page')
@@ -109,7 +109,7 @@ def category_by_id(request: HttpRequest, category_id: int) -> HttpResponse:
     """ Функция представляет собой страницу с категорией продуктов """
 
     category = get_object_or_404(Category, pk=category_id)
-    products = Product.objects.filter(category=category)
+    products = Product.objects.filter(category=category).select_related('category')
 
     paginator = Paginator(products, per_page=3)
     page_id = request.GET.get('page')
