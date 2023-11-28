@@ -118,12 +118,7 @@ def add_product(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = AddProductForm(request.POST, request.FILES)
         if form.is_valid():
-            try:
-                Product.objects.create(**form.cleaned_data)
-                return redirect('catalog')
-            except Exception as e:
-                print(e)
-                form.add_error(None, f'Ошибка добавления продукта: {e}')
+            form.save()
     else:
         form = AddProductForm()
 
