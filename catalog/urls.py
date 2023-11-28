@@ -8,9 +8,9 @@ urlpatterns = [
     path('', views.IndexTemplateView.as_view(), name='home'),
     path('catalog/', views.ProductListView.as_view(), name='catalog'),
     path('contacts/', views.ContactsView.as_view(), name='contacts'),
-    path('catalog/<int:product_id>/', views.show_product, name='product'),
-    path('category/', views.show_category, name='category'),
-    path('category/<int:category_id>/', views.category_by_id, name='category_by_id'),
+    path('catalog/<int:product_id>/', views.ProductDetailView.as_view(), name='product'),
+    path('category/', views.CategoryListView.as_view(), name='category'),
+    path('category/<int:category_id>/', views.CategoryDetailView.as_view(), name='category_by_id'),
     path('add_product/', views.add_product, name='add_product'),
 ]
 

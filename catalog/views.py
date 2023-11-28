@@ -3,7 +3,7 @@ from django.db.models import Sum, Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 
 from .forms import AddProductForm
 from .models import Product, Category
@@ -27,7 +27,6 @@ class IndexTemplateView(TemplateView):
 
 
 class ProductListView(ListView):
-    model = Product
     template_name = 'catalog/catalog.html'
     context_object_name = 'products'
     paginate_by = 6
@@ -58,59 +57,59 @@ class ContactsView(View):
         return render(request, 'catalog/contacts.html', context=self.data)
 
 
-def show_product(request: HttpRequest, product_id: int) -> HttpResponse:
-    """ Функция представляет собой страницу с конкретным продуктом """
+class ProductDetailView(DetailView):
+    template_name = 'catalog/product.html'
+    pk_url_kwarg = 'product_id'
 
-    if request.method == 'POST':
-        if request.POST.get('button_buy'):
-            product = Product.objects.get(pk=product_id)
-            print(f'Пользователь нажал на кнопку купить: {product}')
+    def get_object(self, queryset=None):
+        return get_object_or_404(Product, pk=self.kwargs['product_id'])
 
-    only_product = get_object_or_404(Product, pk=product_id)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Страница с описанием продукта: {self.object.title}'
+        context['menu'] = menu
+        return context
 
-    data = {
-        'title': f'Страница с описанием продукта: {only_product.title}',
-        'menu': menu,
-        'product': only_product,
-    }
-
-    return render(request, 'catalog/product.html', context=data)
+    def post(self, request, product_id):
+        print(f'Пользователь нажал на кнопку купить, товар с id: {self.request.POST.get("button_buy")}')
+        return self.get(request)
 
 
-def show_category(request: HttpRequest) -> HttpResponse:
-    """ Функция представляет собой страницу с категорией продуктов """
-
-    category = Category.objects.annotate(total_products=Count('products'),
-                                         total_price=Sum('products__price')
-                                         ).order_by('pk')
-
-    data = {
+class CategoryListView(ListView):
+    template_name = 'catalog/category.html'
+    extra_context = {
         'title': 'Категории',
         'description': 'Таблица всех категорий продуктов на сайте',
         'menu': menu,
-        'category': category,
     }
 
-    return render(request, 'catalog/category.html', context=data)
+    def get_queryset(self):
+        return Category.objects.annotate(total_products=Count('products'),
+                                         total_price=Sum('products__price')
+                                         ).order_by('pk')
 
 
-def category_by_id(request: HttpRequest, category_id: int) -> HttpResponse:
-    """ Функция представляет собой страницу с категорией продуктов """
+class CategoryDetailView(DetailView):
+    template_name = 'catalog/list_category.html'
+    pk_url_kwarg = 'category_id'
 
-    category = get_object_or_404(Category, pk=category_id)
-    products = Product.objects.filter(category=category).select_related('category')
+    def get_object(self, queryset=None):
+        return get_object_or_404(Category, pk=self.kwargs['category_id'])
 
-    paginator = Paginator(products, per_page=3)
-    page_id = request.GET.get('page')
-    page = paginator.get_page(page_id)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    data = {
-        'title': f'Категория: {category.title}',
-        'menu': menu,
-        'products': page,
-    }
+        category = self.get_object()
+        products = Product.objects.filter(category=category).select_related('category')
+        paginator = Paginator(products, per_page=3)
+        page_id = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_id)
 
-    return render(request, 'catalog/list_category.html', context=data)
+        context['title'] = f'Категория: {self.object.title}'
+        context['menu'] = menu
+        context['paginator'] = paginator
+        context['page_obj'] = page_obj
+        return context
 
 
 def add_product(request: HttpRequest) -> HttpResponse:
