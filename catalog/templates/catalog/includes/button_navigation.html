@@ -1,9 +1,9 @@
-<nav aria-label="Пример навигации по страницам" class="mt-4 sticky-bottom border-top pt-4 pb-3"
+    <nav aria-label="Пример навигации по страницам" class="mt-4 sticky-bottom border-top pt-4 pb-3"
      style="backdrop-filter: blur(5px); background-color: rgba(33, 37, 41, 0.85)">
     <ul class="pagination justify-content-center">
-        {% if products.has_previous %}
+        {% if page_obj.has_previous %}
             <li class="page-item ">
-                <a class="page-link text-warning" href="?page={{ products.previous_page_number }}">Предыдущая</a>
+                <a class="page-link text-warning" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
             </li>
         {% else %}
             <li class="page-item disabled">
@@ -11,17 +11,17 @@
             </li>
         {% endif %}
 
-        {% for p in products.paginator.page_range %}
-            {% if products.number == p %}
+        {% for p in paginator.page_range %}
+            {% if page_obj.number == p %}
                 <li class="page-item"><a class="page-link text-bg-warning" href="#">{{ p }}</a></li>
-            {% elif p >= products.number|add:-4 and p <= products.number|add:4 %}
+            {% elif p >= page_obj.number|add:-4 and p <= page_obj.number|add:4 %}
                 <li class="page-item"><a class="page-link text-warning-emphasis" href="?page={{ p }}">{{ p }}</a></li>
             {% endif %}
         {% endfor %}
 
-        {% if products.has_next %}
+        {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link text-warning" href="?page={{ products.next_page_number }}">Следующая</a>
+                <a class="page-link text-warning" href="?page={{ page_obj.next_page_number }}">Следующая</a>
             </li>
         {% else %}
             <li class="page-item disabled">

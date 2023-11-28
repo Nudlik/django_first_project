@@ -2,7 +2,7 @@
 
 {% block content %}
     <div class="row row-cols-1 row-cols-md-3 g-3">
-        {% for product in products %}
+        {% for product in object_list %}
             <div class="col">
                 <div class="card h-100">
                     {% if product.photo %}
@@ -40,6 +40,6 @@
         {% endfor %}
     </div>
 
-    {% btn_nav products %}
+    {% btn_nav paginator page_obj %}
 
 {% endblock %}

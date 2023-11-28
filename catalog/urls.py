@@ -5,9 +5,9 @@ from django.urls import path
 from catalog import views
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('catalog/', views.catalog, name='catalog'),
-    path('contacts/', views.contacts, name='contacts'),
+    path('', views.IndexTemplateView.as_view(), name='home'),
+    path('catalog/', views.ProductListView.as_view(), name='catalog'),
+    path('contacts/', views.ContactsView.as_view(), name='contacts'),
     path('catalog/<int:product_id>/', views.show_product, name='product'),
     path('category/', views.show_category, name='category'),
     path('category/<int:category_id>/', views.category_by_id, name='category_by_id'),
