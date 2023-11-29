@@ -2,8 +2,9 @@ from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView
 
 from .forms import AddProductForm
 from .models import Product, Category
@@ -112,21 +113,13 @@ class CategoryDetailView(DetailView):
         return context
 
 
-def add_product(request: HttpRequest) -> HttpResponse:
-    """ Функция представляет собой страницу добавления продукта """
-
-    if request.method == 'POST':
-        form = AddProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-    else:
-        form = AddProductForm()
-
-    data = {
+class ProductCreateView(CreateView):
+    form_class = AddProductForm
+    template_name = 'catalog/add_product.html'
+    success_url = reverse_lazy('catalog')
+    extra_context = {
         'title': 'Добавить продукт',
         'description': 'Здесь можно добавить новый продукт, чтобы он появился на сайте',
         'menu': menu,
-        'form': form,
     }
 
-    return render(request, 'catalog/add_product.html', context=data)
