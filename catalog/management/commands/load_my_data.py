@@ -1,6 +1,7 @@
 from django.core.management import BaseCommand, call_command
 from django.db import connection
 
+from blog.models import Post
 from catalog.models import Category, Product
 
 
@@ -8,7 +9,7 @@ class Command(BaseCommand):
     help = 'Очищает и добавляет данные с фикстуры в БД'
 
     def handle(self, *args, **kwargs):
-        for model in (Product, Category):
+        for model in (Product, Category, Post):
             model.objects.all().delete()
             table_name = model._meta.db_table
 
@@ -18,3 +19,4 @@ class Command(BaseCommand):
                 cursor.execute(query)
 
         call_command('loaddata', 'catalog/fixtures/catalog_data.json')
+        call_command('loaddata', 'blog/fixtures/blog_data.json')
