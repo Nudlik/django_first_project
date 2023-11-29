@@ -26,3 +26,15 @@ class MenuMixin:
             context['menu'] = menu
 
         return context
+
+
+def email_():
+    # if obj.view_count == 10:
+    #     send_mail(
+    #         subject='Пост набрал 10 просмотров',
+    #         message='Поздравляю и тд и тп...',
+    #         from_email='gegorp@mail.ru',
+    #         recipient_list=['gegorp@gmail.com'],
+    #         fail_silently=False,
+    #     )
+    pass

@@ -1,5 +1,5 @@
-from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
+from django.core.mail import send_mail
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from blog.forms import PostForm
@@ -30,11 +30,13 @@ class PostDetailView(MenuMixin, DetailView):
 class PostCreateView(MenuMixin, CreateView):
     form_class = PostForm
     template_name = 'blog/post_form.html'
+    page_title = 'Страница для создания статьи'
 
 
 class PostUpdateView(MenuMixin, UpdateView):
     form_class = PostForm
     template_name = 'blog/post_form.html'
+    page_title = 'Страница для редактирования статьи'
 
     def get_queryset(self):
         return Post.objects.filter(slug=self.kwargs['slug'])
@@ -43,5 +45,4 @@ class PostUpdateView(MenuMixin, UpdateView):
 class PostDeleteView(MenuMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('blog:post_list')
-
-
+    page_title = 'Страницы для удаление статьи'
