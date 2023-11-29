@@ -81,11 +81,11 @@ def format_to_row(products: list, count_rows: int = 4) -> list:
 
 
 menu = [
-    {'title': 'Главная', 'url_name': 'home'},
-    {'title': 'Каталог', 'url_name': 'catalog'},
-    {'title': 'Категории', 'url_name': 'category'},
-    {'title': 'Добавить продукт', 'url_name': 'add_product'},
-    {'title': 'Контакты', 'url_name': 'contacts'},
+    {'title': 'Главная', 'url_name': 'catalog:home'},
+    {'title': 'Каталог', 'url_name': 'catalog:catalog'},
+    {'title': 'Категории', 'url_name': 'catalog:category'},
+    {'title': 'Добавить продукт', 'url_name': 'catalog:add_product'},
+    {'title': 'Контакты', 'url_name': 'catalog:contacts'},
 ]
 
 

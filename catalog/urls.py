@@ -1,8 +1,9 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path
 
 from catalog import views
+from catalog.apps import CatalogConfig
+
+app_name = CatalogConfig.name
 
 urlpatterns = [
     path('', views.IndexTemplateView.as_view(), name='home'),
@@ -13,6 +14,3 @@ urlpatterns = [
     path('category/<int:category_id>/', views.CategoryDetailView.as_view(), name='category_by_id'),
     path('add_product/', views.ProductCreateView.as_view(), name='add_product'),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

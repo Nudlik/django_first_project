@@ -39,7 +39,7 @@ class Product(models.Model):
         ordering = ['-time_create']
 
     def get_absolute_url(self):
-        return reverse('product', kwargs={'product_id': self.pk})
+        return reverse('catalog:product', kwargs={'product_id': self.pk})
 
 
 class Category(models.Model):
@@ -55,7 +55,7 @@ class Category(models.Model):
         ordering = ['title']
 
     def get_absolute_url(self):
-        return reverse('category_by_id', kwargs={'category_id': self.pk})
+        return reverse('catalog:category_by_id', kwargs={'category_id': self.pk})
 
 
 class Contact(models.Model):

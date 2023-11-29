@@ -94,6 +94,6 @@ class CategoryDetailView(MenuMixin, DetailView):
 class ProductCreateView(MenuMixin, CreateView):
     form_class = AddProductForm
     template_name = 'catalog/add_product.html'
-    success_url = reverse_lazy('catalog')
+    success_url = reverse_lazy('catalog:catalog')
     page_title = 'Добавить продукт'
     page_description = 'Здесь можно добавить новый продукт, чтобы он появился на сайте'
