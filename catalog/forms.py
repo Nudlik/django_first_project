@@ -44,9 +44,6 @@ class AddProductForm(forms.ModelForm):
                                       widget=Meta.widgets['category'],
                                       )
 
-    photo = forms.ImageField(required=False,
-                             widget=Meta.widgets['photo'],
-                             )
     is_published = forms.TypedChoiceField(choices=Product.Status.choices,
                                           coerce=int,
                                           widget=Meta.widgets['is_published'],

@@ -16,7 +16,7 @@ class Product(models.Model):
 
     title = models.CharField(max_length=255, verbose_name='Название')
     description = models.TextField(**NULLABLE, verbose_name='Описание')
-    photo = models.ImageField(upload_to='photos/', **NULLABLE, verbose_name='Фото')
+    photo = models.ImageField(upload_to='photos/products/%Y/%m/%d/', **NULLABLE, verbose_name='Фото')
     category = models.ForeignKey(to='Category',
                                  on_delete=models.PROTECT,
                                  related_name='products',

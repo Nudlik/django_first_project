@@ -1,3 +1,5 @@
+import os
+
 from django.template.defaulttags import register
 
 from catalog.models import Contact
@@ -35,3 +37,8 @@ def contact_info():
 @register.inclusion_tag('catalog/includes/button_navigation.html', name='btn_nav')
 def button_navigation(paginator, page_obj):
     return {'paginator': paginator, 'page_obj': page_obj}
+
+
+@register.filter
+def file_exists(path):
+    return os.path.exists(path)
