@@ -1,10 +1,12 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from blog.forms import PostForm
 from blog.models import Post
 from blog.utils import MenuMixin
+from config.settings import env
 
 
 class PostListView(MenuMixin, ListView):
@@ -23,7 +25,20 @@ class PostDetailView(MenuMixin, DetailView):
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         obj.view_count += 1
-        obj.save()
+        obj.save(update_fields=['view_count'])
+
+        if obj.view_count == 100:
+            site = get_current_site(self.request)
+            post_url = reverse('blog:post_detail', args=[obj.slug])
+            absolute_url = f'{self.request.scheme}://{site.domain}{post_url}'
+            send_mail(
+                subject=f'Пост "{obj.title}" набрал 100 просмотров',
+                message=f'Поздравляю и тд и тп... перейдите по ссылке для просмотра {absolute_url}',
+                from_email=env.str('EMAIL_HOST_USER'),
+                recipient_list=[env.str('EMAIL_HOST_USER')],
+                fail_silently=False,
+            )
+
         return obj
 
 
