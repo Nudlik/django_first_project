@@ -1,5 +1,11 @@
 import random
 
+from django.db import transaction
+from django.forms import inlineformset_factory
+
+from catalog.forms import VersionForm
+from catalog.models import Version
+
 
 def create_product(size: int = 10) -> tuple:
     """ Функция для создания продуктов. """
@@ -82,9 +88,9 @@ def format_to_row(products: list, count_rows: int = 4) -> list:
 
 menu = [
     {'title': 'Главная', 'url_name': 'catalog:home'},
-    {'title': 'Каталог', 'url_name': 'catalog:catalog'},
-    {'title': 'Категории', 'url_name': 'catalog:category'},
-    {'title': 'Добавить продукт', 'url_name': 'catalog:add_product'},
+    {'title': 'Каталог', 'url_name': 'catalog:list_product'},
+    {'title': 'Категории', 'url_name': 'catalog:list_category'},
+    {'title': 'Добавить продукт', 'url_name': 'catalog:create_product'},
     {'title': 'Контакты', 'url_name': 'catalog:contacts'},
 ]
 
@@ -110,3 +116,30 @@ class MenuMixin:
             context['menu'] = menu
 
         return context
+
+
+class VersionMixin:
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        FormSet = inlineformset_factory(self.model, Version, form=VersionForm, extra=1)
+
+        if self.request.method == 'POST':
+            formset = FormSet(self.request.POST, instance=self.object)
+        else:
+            formset = FormSet(instance=self.object)
+
+        context_data['formset'] = formset
+        return context_data
+
+    def form_valid(self, form):
+        context_data = self.get_context_data()
+        formset = context_data['formset']
+        with transaction.atomic():
+            if form.is_valid():
+                self.object = form.save()  # Product
+                if formset.is_valid():
+                    formset.instance = self.object
+                    formset.save()  # Version
+
+        return super().form_valid(form)

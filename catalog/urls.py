@@ -7,10 +7,15 @@ app_name = CatalogConfig.name
 
 urlpatterns = [
     path('', views.IndexTemplateView.as_view(), name='home'),
-    path('catalog/', views.ProductListView.as_view(), name='catalog'),
     path('contacts/', views.ContactsView.as_view(), name='contacts'),
-    path('catalog/<int:product_id>/', views.ProductDetailView.as_view(), name='product'),
-    path('category/', views.CategoryListView.as_view(), name='category'),
-    path('category/<int:category_id>/', views.CategoryDetailView.as_view(), name='category_by_id'),
-    path('add_product/', views.ProductCreateView.as_view(), name='add_product'),
+
+    path('category/', views.CategoryListView.as_view(), name='list_category'),
+    path('category/<int:pk>/', views.CategoryDetailView.as_view(), name='view_category'),
+
+    path('catalog/', views.ProductListView.as_view(), name='list_product'),
+    path('create-product/', views.ProductCreateView.as_view(), name='create_product'),
+    path('catalog/<int:pk>/', views.ProductDetailView.as_view(), name='view_product'),
+    path('catalog/<int:pk>/update/', views.ProductUpdateView.as_view(), name='update_product'),
+    path('catalog/<int:pk>/delete/', views.ProductDeleteView.as_view(), name='delete_product'),
 ]
+

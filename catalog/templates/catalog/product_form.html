@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form action="" method="post" enctype="multipart/form-data">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header bg-dark-subtle">Добавить Продукт</div>
+                    <div class="card-body">
+                        {% csrf_token %}
+                        <div class="row-form-errors">{{ form.non_field_errors }}</div>
+
+                        {% for f in form %}
+                            <p><label class="mb-2 mx-2"
+                                      for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }} {{ f.help_text }}
+                            </p>
+                            <div class="text-danger">{{ f.errors }}</div>
+                        {% endfor %}
+
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-lg btn-block btn-outline-warning" href="javascript:history.go(-1)">Назад</a>
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-warning" name="product_form">
+                            Сохранить
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header bg-dark-subtle">Добавить Версию</div>
+                    <div class="card-body">
+                        <div class="row-form-errors">{{ formset.non_form_errors }}</div>
+                        {{ formset.management_form }}
+
+                        {% for form in formset %}
+                            {{ form.as_p }}
+                            {% if not forloop.last %}
+                                <hr class="border border-3 border-warning-subtle">
+                            {% endif %}
+                            {% if form.errors %}
+                                <ul class="errorlist">
+                                    {% for error in form.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+{% endblock %}

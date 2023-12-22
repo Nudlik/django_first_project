@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
@@ -39,7 +40,7 @@ class Product(models.Model):
         ordering = ['-time_create']
 
     def get_absolute_url(self):
-        return reverse('catalog:product', kwargs={'product_id': self.pk})
+        return reverse('catalog:view_product', kwargs={'pk': self.pk})
 
 
 class Category(models.Model):
@@ -55,7 +56,22 @@ class Category(models.Model):
         ordering = ['title']
 
     def get_absolute_url(self):
-        return reverse('catalog:category_by_id', kwargs={'category_id': self.pk})
+        return reverse('catalog:view_category', kwargs={'pk': self.pk})
+
+
+class Version(models.Model):
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='version', verbose_name='Продукт')
+    version_number = models.PositiveIntegerField(verbose_name='Номер версии')
+    title = models.CharField(max_length=255, **NULLABLE, verbose_name='Название версии')
+    is_active = models.BooleanField(default=False, **NULLABLE, verbose_name='Активна')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Версия'
+        verbose_name_plural = 'Версии'
+        ordering = ['-version_number']
 
 
 class Contact(models.Model):

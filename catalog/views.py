@@ -1,12 +1,12 @@
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView, ListView, DetailView, CreateView
+from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
 from .forms import AddProductForm
 from .models import Product, Category, Contact
-from .utils import MenuMixin
+from .utils import MenuMixin, VersionMixin
 
 
 class IndexTemplateView(MenuMixin, TemplateView):
@@ -15,21 +15,8 @@ class IndexTemplateView(MenuMixin, TemplateView):
     page_description = 'Skystore - это интернет-магазин'
 
 
-class ProductListView(MenuMixin, ListView):
-    template_name = 'catalog/catalog.html'
-    context_object_name = 'products'
-    paginate_by = 6
-    page_title = 'Каталог'
-    page_description = ('Skystore - это отличный вариант хранения ваших вещей '
-                        'и примеров товаров, который вы бы хотели продать')
-
-    def get_queryset(self):
-        return Product.published.all().order_by('-time_update').select_related('category')
-
-
 class ContactsView(MenuMixin, ListView):
     model = Contact
-    template_name = 'catalog/contacts.html'
     page_title = 'Контакты'
     page_description = 'Мы всегда рады обратной связи'
 
@@ -39,26 +26,7 @@ class ContactsView(MenuMixin, ListView):
         return self.get(request)
 
 
-class ProductDetailView(MenuMixin, DetailView):
-    template_name = 'catalog/product.html'
-    pk_url_kwarg = 'product_id'
-
-    def get_object(self, queryset=None):
-        return get_object_or_404(Product, pk=self.kwargs['product_id'])
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return self.get_mixin_context(context,
-                                      title=f'Страница с описанием продукта: {self.object.title}',
-                                      )
-
-    def post(self, request, product_id):
-        print(f'Пользователь нажал на кнопку купить, товар с id: {self.request.POST.get("button_buy")}')
-        return self.get(request)
-
-
 class CategoryListView(MenuMixin, ListView):
-    template_name = 'catalog/category.html'
     page_title = 'Категории'
     page_description = 'Таблица всех категорий продуктов на сайте'
 
@@ -69,11 +37,9 @@ class CategoryListView(MenuMixin, ListView):
 
 
 class CategoryDetailView(MenuMixin, DetailView):
-    template_name = 'catalog/list_category.html'
-    pk_url_kwarg = 'category_id'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Category, pk=self.kwargs['category_id'])
+        return get_object_or_404(Category, pk=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -91,9 +57,52 @@ class CategoryDetailView(MenuMixin, DetailView):
                                       )
 
 
-class ProductCreateView(MenuMixin, CreateView):
+class ProductListView(MenuMixin, ListView):
+    paginate_by = 6
+    page_title = 'Каталог'
+    page_description = ('Skystore - это отличный вариант хранения ваших вещей '
+                        'и примеров товаров, который вы бы хотели продать')
+
+    def get_queryset(self):
+        return Product.published.all().order_by('-time_update').select_related('category')
+
+
+class ProductDetailView(MenuMixin, DetailView):
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Product, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return self.get_mixin_context(context, title=f'Страница с описанием продукта: {self.object.title}')
+
+    def post(self, request, pk):
+        print(f'Пользователь нажал на кнопку купить, товар с id: {self.request.POST.get("button_buy")}')
+        return self.get(request)
+
+
+class ProductCreateView(MenuMixin, VersionMixin, CreateView):
+    model = Product
     form_class = AddProductForm
-    template_name = 'catalog/add_product.html'
-    success_url = reverse_lazy('catalog:catalog')
+    success_url = reverse_lazy('catalog:list_product')
     page_title = 'Добавить продукт'
     page_description = 'Здесь можно добавить новый продукт, чтобы он появился на сайте'
+
+
+class ProductUpdateView(MenuMixin, VersionMixin, UpdateView):
+    model = Product
+    form_class = AddProductForm
+    page_title = 'Страница для редактирования продукта'
+    page_description = 'Здесь можно редактировать информацию о продукте'
+
+    def get_queryset(self):
+        return Product.objects.filter(pk=self.kwargs['pk'])
+
+    def get_success_url(self):
+        return reverse('catalog:view_product', kwargs={'pk': self.object.pk})
+
+
+class ProductDeleteView(MenuMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy('catalog:list_product')
+    page_title = 'Страница для удаление статьи'
