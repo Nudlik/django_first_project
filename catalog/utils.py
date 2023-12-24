@@ -141,5 +141,7 @@ class VersionMixin:
                 if formset.is_valid():
                     formset.instance = self.object
                     formset.save()  # Version
+                else:
+                    return self.form_invalid(form)
 
         return super().form_valid(form)

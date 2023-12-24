@@ -12,8 +12,8 @@ class PublishedManager(models.Manager):
 
 class Product(models.Model):
     class Status(models.IntegerChoices):
-        DRAFT = 0, 'Черновик'
         PUBLISHED = 1, 'Опубликовано'
+        DRAFT = 0, 'Черновик'
 
     title = models.CharField(max_length=255, verbose_name='Название')
     description = models.TextField(**NULLABLE, verbose_name='Описание')
@@ -71,7 +71,7 @@ class Version(models.Model):
     class Meta:
         verbose_name = 'Версия'
         verbose_name_plural = 'Версии'
-        ordering = ['-version_number']
+        ordering = ['-is_active', '-version_number']
 
 
 class Contact(models.Model):

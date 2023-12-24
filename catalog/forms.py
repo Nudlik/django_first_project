@@ -16,7 +16,7 @@ class AddProductForm(forms.ModelForm):
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
-            'is_published': forms.Select(attrs={'class': 'form-control'})
+            'is_published': forms.Select(attrs={'class': 'form-control'}),
         }
 
     category = forms.ModelChoiceField(queryset=Category.objects.all(),
@@ -61,6 +61,10 @@ class CategoryForm(forms.ModelForm):
 
 class VersionForm(forms.ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['is_active'].error_messages = {'required': 'Можно выбрать только одну активную версию'}
+
     class Meta:
         model = Version
         fields = ['product', 'version_number', 'title', 'is_active']
@@ -72,16 +76,11 @@ class VersionForm(forms.ModelForm):
 
     def clean_is_active(self):
         is_active = self.cleaned_data['is_active']
-        product = self.cleaned_data['product']
-        active_versions = Version.objects.filter(product=product, is_active=True)
 
-        counter = 0
+        checkbox_counter = 0
         for for_, value in self.data.items():
             if for_.endswith('is_active') and value == 'on':
-                if (counter := counter + 1) > 1:
-                    break
-
-        if counter > 1 or active_versions.count() + is_active > 1:
-            raise forms.ValidationError('Можно выбрать только одну активную версию')
+                if (checkbox_counter := checkbox_counter + 1) > 1:
+                    raise forms.ValidationError('Можно выбрать только одну активную версию')
 
         return is_active

@@ -26,10 +26,12 @@
                     </ul>
                     <form method="post" action="{{ product.get_absolute_url }}">
                         {% csrf_token %}
+                        <div class="card-footer p-3 pt-3 mt-3 border">
                         <a class="btn btn-lg btn-block btn-outline-warning" href="javascript:history.go(-1)">Назад</a>
                         <button type="submit" class="btn btn-lg btn-block btn-outline-warning" name="button_buy"
                                 value="{{ product.pk }}">Купить
                         </button>
+                        </div>
 
                         <div class="card-footer p-3 pt-3 mt-3 border">
                             <a type="submit" class="btn btn-lg btn-block btn-outline-warning"
