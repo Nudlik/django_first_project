@@ -5,11 +5,11 @@
     "fields": {
         "title": "Дженга",
         "description": "Многофункциональный и удобный в использовании;Изысканный и роскошный аксессуар для вашего стиля",
-        "photo": "photos/jenga_QlrMNRX.jfif",
+        "photo": "photos/products/2023/11/29/jenga_QlrMNRX.jfif",
         "category": 1,
         "price": "11.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T22:19:39.348Z",
+        "time_update": "2023-12-23T13:14:50.837Z",
         "is_published": true
     }
 },
@@ -23,7 +23,7 @@
         "category": 1,
         "price": "22.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:16:52.463Z",
         "is_published": true
     }
 },
@@ -37,7 +37,7 @@
         "category": 2,
         "price": "26.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:17:14.322Z",
         "is_published": true
     }
 },
@@ -51,7 +51,7 @@
         "category": 5,
         "price": "13.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:26:27.837Z",
         "is_published": true
     }
 },
@@ -65,7 +65,7 @@
         "category": 3,
         "price": "31.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:25:37.006Z",
         "is_published": true
     }
 },
@@ -79,7 +79,7 @@
         "category": 2,
         "price": "13.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:25:50.964Z",
         "is_published": true
     }
 },
@@ -93,7 +93,7 @@
         "category": 4,
         "price": "36.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:26:07.462Z",
         "is_published": true
     }
 },
@@ -107,7 +107,7 @@
         "category": 1,
         "price": "20.99",
         "time_create": "2023-11-20T12:50:32.044Z",
-        "time_update": "2023-11-20T12:50:32.044Z",
+        "time_update": "2023-12-23T13:26:40.500Z",
         "is_published": true
     }
 },
@@ -117,11 +117,11 @@
     "fields": {
         "title": "Бейсбольная бита",
         "description": "Идеальное сочетание комфорта и функциональности;Надежное решение для повседневного использования;Производительность на высшем уровне",
-        "photo": "photos/bita_k9Irzzi.jpg",
+        "photo": "photos/products/2023/11/29/bita_k9Irzzi.jpg",
         "category": 5,
         "price": "31.99",
         "time_create": "2023-11-20T12:50:32.045Z",
-        "time_update": "2023-11-20T21:52:32.304Z",
+        "time_update": "2023-12-23T13:15:36.467Z",
         "is_published": true
     }
 },
@@ -131,11 +131,11 @@
     "fields": {
         "title": "Коврик",
         "description": "Высокая степень прочности и устойчивости;Роскошный внешний вид и впечатляющие характеристики;Оригинальное решение для повседневного комфорта;Элегантный и стильный аксессуар для вашего образа;Ультра-прочный материал для долговечности",
-        "photo": "photos/images.jfif",
+        "photo": "photos/products/2023/11/29/images.jfif",
         "category": 3,
         "price": "32.99",
         "time_create": "2023-11-20T12:50:32.045Z",
-        "time_update": "2023-11-20T22:08:01.310Z",
+        "time_update": "2023-12-23T13:15:12.570Z",
         "is_published": true
     }
 },
@@ -145,11 +145,11 @@
     "fields": {
         "title": "Картина",
         "description": "Красивая;Живопись;Размер 20х40",
-        "photo": "photos/kartina.jfif",
+        "photo": "photos/products/2023/11/29/kartina.jfif",
         "category": 3,
         "price": "9.99",
         "time_create": "2023-11-21T11:39:50.485Z",
-        "time_update": "2023-11-21T12:06:02.352Z",
+        "time_update": "2023-12-23T13:14:24.650Z",
         "is_published": true
     }
 },
@@ -159,11 +159,25 @@
     "fields": {
         "title": "Носки",
         "description": "Универсальные;Теплые;Модные;Мягкие",
-        "photo": "photos/noski.jfif",
+        "photo": "photos/products/2023/11/29/noski.jfif",
         "category": 2,
         "price": "2.99",
         "time_create": "2023-11-21T12:30:48.391Z",
-        "time_update": "2023-11-21T12:30:48.391Z",
+        "time_update": "2023-12-23T13:14:06.173Z",
+        "is_published": true
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 51,
+    "fields": {
+        "title": "казин1",
+        "description": "",
+        "photo": "",
+        "category": 1,
+        "price": "0.00",
+        "time_create": "2023-12-24T02:35:55.949Z",
+        "time_update": "2023-12-24T03:51:34.712Z",
         "is_published": true
     }
 },
@@ -205,6 +219,156 @@
     "fields": {
         "title": "Спорт",
         "description": "Одежда и инвентарь "
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 44,
+    "fields": {
+        "product": 12,
+        "version_number": 1,
+        "title": "Теплые",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 45,
+    "fields": {
+        "product": 11,
+        "version_number": 1,
+        "title": "Электронная",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 46,
+    "fields": {
+        "product": 1,
+        "version_number": 1,
+        "title": "Настольная",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 47,
+    "fields": {
+        "product": 10,
+        "version_number": 1,
+        "title": "Напольный",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 48,
+    "fields": {
+        "product": 9,
+        "version_number": 1,
+        "title": "Домашняя",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 49,
+    "fields": {
+        "product": 2,
+        "version_number": 1,
+        "title": "Уличная",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 50,
+    "fields": {
+        "product": 3,
+        "version_number": 1,
+        "title": "Ушанка",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 51,
+    "fields": {
+        "product": 5,
+        "version_number": 1,
+        "title": "1",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 52,
+    "fields": {
+        "product": 6,
+        "version_number": 1,
+        "title": "1",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 53,
+    "fields": {
+        "product": 7,
+        "version_number": 1,
+        "title": "Настенная",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 54,
+    "fields": {
+        "product": 4,
+        "version_number": 1,
+        "title": "Игровой",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 55,
+    "fields": {
+        "product": 8,
+        "version_number": 1,
+        "title": "1",
+        "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 61,
+    "fields": {
+        "product": 51,
+        "version_number": 1,
+        "title": "1",
+        "is_active": false
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 62,
+    "fields": {
+        "product": 51,
+        "version_number": 2,
+        "title": "2",
+        "is_active": false
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 63,
+    "fields": {
+        "product": 51,
+        "version_number": 3,
+        "title": "3",
+        "is_active": true
     }
 },
 {

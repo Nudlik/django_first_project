@@ -61,10 +61,6 @@ class CategoryForm(forms.ModelForm):
 
 class VersionForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['is_active'].error_messages = {'required': 'Можно выбрать только одну активную версию'}
-
     class Meta:
         model = Version
         fields = ['product', 'version_number', 'title', 'is_active']
