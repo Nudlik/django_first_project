@@ -64,12 +64,7 @@ class ProductListView(MenuMixin, ListView):
                         'и примеров товаров, который вы бы хотели продать')
 
     def get_queryset(self):
-        default_query = True
-        if default_query:
-            return Product.published.all().order_by('-time_update').select_related('category')
-
-        version_pk = Version.objects.filter(is_active=True).distinct()
-        return Product.objects.filter(version__pk__in=version_pk).order_by('-time_update').select_related('category')
+        return Product.objects.filter(version__is_active=True).order_by('-time_update').select_related('category')
 
 
 class ProductDetailView(MenuMixin, DetailView):

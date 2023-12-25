@@ -73,10 +73,11 @@ class VersionForm(forms.ModelForm):
     def clean_is_active(self):
         is_active = self.cleaned_data['is_active']
 
-        checkbox_counter = 0
-        for for_, value in self.data.items():
-            if for_.endswith('is_active') and value == 'on':
-                if (checkbox_counter := checkbox_counter + 1) > 1:
-                    raise forms.ValidationError('Можно выбрать только одну активную версию')
+        if is_active:
+            checkbox_counter = 0
+            for for_, value in self.data.items():
+                if for_.endswith('is_active') and value == 'on':
+                    if (checkbox_counter := checkbox_counter + 1) > 1:
+                        raise forms.ValidationError('Можно выбрать только одну активную версию')
 
         return is_active

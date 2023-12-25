@@ -44,7 +44,7 @@ class Product(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=255, verbose_name='Название')
+    title = models.CharField(max_length=255, unique=True, verbose_name='Название')
     description = models.TextField(**NULLABLE, verbose_name='Описание')
 
     def __str__(self):

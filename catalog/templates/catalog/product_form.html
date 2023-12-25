@@ -42,16 +42,16 @@
                             {% for form in formset %}
                                 <div class="col">
                                     <div class="card h-100 p-3">
-                                        {{ form.as_p }}
 
-{#                                        {% for f in form %}#}
-{#                                            {% if not f.is_hidden %}#}
-{#                                                <p><label class="mb-2 mx-2"#}
-{#                                                          for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }} {{ f.help_text }}#}
-{#                                                </p>#}
-{#                                                <div class="text-danger">{{ f.errors }}</div>#}
-{#                                            {% endif %}#}
-{#                                        {% endfor %}#}
+                                        {% for f in form %}
+                                            {% if not f.is_hidden %}
+                                                <p><label class="mb-2 mx-2"
+                                                          for="{{ f.auto_id }}">{{ f.label }}: </label>{{ f }}</p>
+                                                <div class="text-danger">{{ f.errors }}</div>
+                                            {% else %}
+                                                {{ f }}
+                                            {% endif %}
+                                        {% endfor %}
 
                                     </div>
                                 </div>
@@ -65,18 +65,34 @@
     </form>
 
     <script>
-        const checkboxes = document.querySelectorAll('.form-check-input');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                if (this.checked) {
-                    checkboxes.forEach(otherCheckbox => {
-                        if (otherCheckbox !== this) {
-                            otherCheckbox.checked = false;
-                        }
-                    });
+
+        {% if request.resolver_match.view_name == 'catalog:create_product' %}
+            window.addEventListener("DOMContentLoaded", function () {
+                var versionNumberInput = document.querySelector("#id_version-0-version_number");
+                var isActiveCheckbox = document.querySelector("#id_version-0-is_active");
+
+                if (versionNumberInput && isActiveCheckbox) {
+                    versionNumberInput.value = "1";
+                    isActiveCheckbox.checked = true;
                 }
             });
-        });
+        {% endif %}
+
+        {% if request.resolver_match.view_name == 'catalog:update_product' %}
+            const checkboxes = document.querySelectorAll('.form-check-input');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        checkboxes.forEach(otherCheckbox => {
+                            if (otherCheckbox !== this) {
+                                otherCheckbox.checked = false;
+                            }
+                        });
+                    }
+                });
+            });
+        {% endif %}
+
     </script>
 
 {% endblock %}
