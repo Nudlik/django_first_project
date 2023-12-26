@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
 from .forms import AddProductForm
-from .models import Product, Category, Contact, Version
+from .models import Product, Category, Contact
 from .utils import MenuMixin, VersionMixin
 
 

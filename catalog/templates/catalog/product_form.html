@@ -41,11 +41,12 @@
 
                             {% for form in formset %}
                                 <div class="col">
-                                    <div class="card h-100 p-3">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-dark-subtle text-center mb-2 text-warning">Версия: {{ form.version_number.value|default:'#' }}</div>
 
                                         {% for f in form %}
                                             {% if not f.is_hidden %}
-                                                <p><label class="mb-2 mx-2"
+                                                <p class="px-3"><label class="mb-2 mx-2"
                                                           for="{{ f.auto_id }}">{{ f.label }}: </label>{{ f }}</p>
                                                 <div class="text-danger">{{ f.errors }}</div>
                                             {% else %}
