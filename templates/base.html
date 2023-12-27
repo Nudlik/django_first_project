@@ -21,13 +21,30 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% with url_name=request.resolver_match.url_name %}
                     {% for m in menu %}
-                        <li class="nav-item">
-                            <a class="p-2 btn btn-outline-warning {% if request.resolver_match.url_name == m.url_name %}active{% endif %}" style="margin: 2px"
-                               href="{% if m.url_name %}{% url m.url_name %}{% else %}#{% endif %}">{{ m.title }}</a>
+                        <li class="nav-item" style="margin: 2px">
+                            <a class="p-2 btn btn-outline-warning {% if request.resolver_match.url_name == m.url_name %}active{% endif %}"
+                               href="{% if m.url_name %}{% url m.url_name %}{% else %}#{% endif %}">
+                                {{ m.title }}
+                            </a>
                         </li>
                     {% endfor %}
                 {% endwith %}
             </ul>
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="margin: 2px">
+                {% if user.is_authenticated %}
+                    <li class="nav-item last">
+                        <a class="p-2 btn btn-outline-warning" href="#">{{ user.username }}</a>
+                        <a class="p-2 btn btn-outline-warning"  href="{% url 'user:logout' %}">Выйти</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item last">
+                        <a class="p-2 btn btn-outline-warning" href="{% url 'user:login' %}">Войти</a>
+                        <a class="p-2 btn btn-outline-warning" href="#">Регистрация</a>
+                    </li>
+                {% endif %}
+            </ul>
+
         </div>
     </div>
 </nav>

@@ -42,18 +42,36 @@
                             {% for form in formset %}
                                 <div class="col">
                                     <div class="card h-100">
-                                        <div class="card-header bg-dark-subtle text-center mb-2 text-warning">Версия: {{ form.version_number.value|default:'#' }}</div>
+                                        <div class="card-header bg-dark-subtle text-center mb-2 text-warning">
+                                            Версия: {{ form.version_number.value|default:'#' }}
+                                        </div>
 
-                                        {% for f in form %}
-                                            {% if not f.is_hidden %}
-                                                <p class="px-3"><label class="mb-2 mx-2"
-                                                          for="{{ f.auto_id }}">{{ f.label }}: </label>{{ f }}</p>
-                                                <div class="text-danger">{{ f.errors }}</div>
-                                            {% else %}
-                                                {{ f }}
-                                            {% endif %}
+                                        {% for field in form.visible_fields %}
+                                            <div class="form-group">
+                                                <p class="px-3">
+                                                    <label class="mb-2 mx-2"
+                                                           for="{{ field.id_for_label }}">{{ field.label }}:
+                                                    </label>
+                                                    {{ field }}
+                                                </p>
+
+                                                {% if field.help_text %}
+                                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                                {% endif %}
+
+                                                {% for error in field.errors %}
+                                                    <div class="text-danger mb-2 mx-2">
+                                                        <p class="px-3">
+                                                            {{ error }}
+                                                        </p>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
                                         {% endfor %}
 
+                                        {% for hidden in form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
                                     </div>
                                 </div>
                             {% endfor %}

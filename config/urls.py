@@ -26,7 +26,7 @@ urlpatterns = [
     # Мои URL
     path('', include('catalog.urls'), name='catalog'),
     path('blog/', include('blog.urls'), name='blog'),
-    path('user/', include('users.urls'), name='user'),
+    path('user/', include('users.urls', namespace='user'), name='user'),
 
     # Сторонние URL
     path('__debug__/', include('debug_toolbar.urls')),
