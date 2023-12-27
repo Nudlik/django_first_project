@@ -1,15 +1,8 @@
 from django import forms
 from django.contrib import admin
 
-from catalog.forms import VersionForm, AddProductForm as APF
+from catalog.forms import VersionForm, ProductValidateMixin
 from .models import Product, Category, Contact, Version
-
-
-class ProductAdminForm(forms.ModelForm):
-    BANNED_WORDS = APF.BANNED_WORDS
-    check_ban_words = APF.check_ban_words
-    clean_title = APF.clean_title
-    clean_description = APF.clean_description
 
 
 class VersionInline(admin.StackedInline):
@@ -20,7 +13,7 @@ class VersionInline(admin.StackedInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    form = ProductAdminForm
+    form = type('ProductAdminForm', (forms.ModelForm, ProductValidateMixin), {})
     list_display = ['title', 'price', 'category', 'is_published']
     list_filter = ['is_published', 'category']
     search_fields = ['title', 'description']

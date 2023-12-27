@@ -80,7 +80,7 @@
         {% endif %}
 
         {% if request.resolver_match.view_name == 'catalog:update_product' %}
-            const checkboxes = document.querySelectorAll('.form-check-input');
+            const checkboxes = document.querySelectorAll('[id$=-is_active]');
             checkboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {

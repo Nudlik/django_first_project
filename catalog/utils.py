@@ -4,7 +4,7 @@ from django import forms
 from django.db import transaction
 from django.forms import inlineformset_factory
 
-from catalog.forms import VersionForm
+from catalog.forms import VersionForm, ProductVersionFormSet
 from catalog.models import Version
 
 
@@ -123,12 +123,11 @@ class VersionMixin:
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        FormSet = inlineformset_factory(self.model, Version, form=VersionForm, extra=1)
 
         if self.request.method == 'POST':
-            formset = FormSet(self.request.POST, instance=self.object)
+            formset = ProductVersionFormSet(self.request.POST, instance=self.object)
         else:
-            formset = FormSet(instance=self.object)
+            formset = ProductVersionFormSet(instance=self.object)
 
         context_data['formset'] = formset
         return context_data

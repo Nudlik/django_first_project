@@ -14,6 +14,11 @@ class Command(BaseCommand):
         for app in installed_apps:
             if '.apps.' in app:
                 app_name = app.split('.', 1)[0]
-                path_to_fixtures = os.path.join(app_name, 'fixtures', f'{app_name}_data.json')
+
+                path_to_folder = os.path.join(settings.BASE_DIR, app_name, 'fixtures')
+                if not os.path.exists(path_to_folder):
+                    os.mkdir(path_to_folder)
+
+                path_to_fixtures = os.path.join(path_to_folder, f'{app_name}_data.json')
                 with codecs.open(path_to_fixtures, 'w', encoding='utf-8') as file:
                     call_command('dumpdata', app_name, indent=4, stdout=file)

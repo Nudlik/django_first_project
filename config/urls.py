@@ -20,10 +20,16 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    # Встроенные URL
     path('admin/', admin.site.urls),
-    path('__debug__/', include('debug_toolbar.urls')),
+
+    # Мои URL
     path('', include('catalog.urls'), name='catalog'),
     path('blog/', include('blog.urls'), name='blog'),
+    path('user/', include('users.urls'), name='user'),
+
+    # Сторонние URL
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 if settings.DEBUG:

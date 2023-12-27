@@ -1,10 +1,28 @@
 from django import forms
+from django.forms import inlineformset_factory
 
 from .models import Category, Product, Version
 
 
-class AddProductForm(forms.ModelForm):
+class ProductValidateMixin:
     BANNED_WORDS = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар']
+
+    def check_ban_words(self, attr_name, msg_err):
+        attr_name = self.cleaned_data[attr_name]
+        attr_name_lower = attr_name.lower()
+        for word in self.BANNED_WORDS:
+            if word in attr_name_lower:
+                raise forms.ValidationError(msg_err.format(word))
+        return attr_name
+
+    def clean_title(self):
+        return self.check_ban_words('title', 'Запрещено в названии использовать слово: "{}"')
+
+    def clean_description(self):
+        return self.check_ban_words('description', 'Запрещено в описании использовать слово: "{}"')
+
+
+class AddProductForm(forms.ModelForm, ProductValidateMixin):
 
     class Meta:
         model = Product
@@ -32,20 +50,6 @@ class AddProductForm(forms.ModelForm):
                                           label='Статус',
                                           )
 
-    def check_ban_words(self, attr_name, msg_err):
-        attr_name = self.cleaned_data[attr_name]
-        attr_name_lower = attr_name.lower()
-        for word in self.BANNED_WORDS:
-            if word in attr_name_lower:
-                raise forms.ValidationError(msg_err.format(word))
-        return attr_name
-
-    def clean_title(self):
-        return self.check_ban_words('title', 'Запрещено в названии использовать слово: "{}"')
-
-    def clean_description(self):
-        return self.check_ban_words('description', 'Запрещено в описании использовать слово: "{}"')
-
 
 class CategoryForm(forms.ModelForm):
 
@@ -68,6 +72,7 @@ class VersionForm(forms.ModelForm):
             'version_number': forms.NumberInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'DELETE': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
     def clean_is_active(self):
@@ -81,3 +86,17 @@ class VersionForm(forms.ModelForm):
                         raise forms.ValidationError('Можно выбрать только одну активную версию')
 
         return is_active
+
+
+ProductVersionFormSetBase = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+
+
+# from django.forms import BaseFormSet; BaseFormSet # родитель для дебага
+class ProductVersionFormSet(ProductVersionFormSetBase):
+
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        widgets = form.Meta.widgets
+        if widgets:
+            for field_name, widget in widgets.items():
+                form.fields[field_name].widget = widget

@@ -9,7 +9,12 @@ class Command(BaseCommand):
     help = 'Очищает и добавляет данные с фикстуры в БД'
 
     def handle(self, *args, **kwargs):
-        for model in (Product, Category, Post):
+        models = (
+            Product,
+            Category,
+            Post,
+        )
+        for model in models:
             model.objects.all().delete()
             table_name = model._meta.db_table
 

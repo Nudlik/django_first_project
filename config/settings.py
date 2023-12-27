@@ -46,9 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
+
+    # Мои приложения
     'catalog.apps.CatalogConfig',
     'blog.apps.BlogConfig',
+    'users.apps.UsersConfig',
+
+    # Сторонние приложения
+    'django_extensions',
     'debug_toolbar',
 ]
 
@@ -163,3 +168,9 @@ if DEBUG_EMAIL:
     EMAIL_ADMIN = EMAIL_HOST_USER
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGIN_REDIRECT_URL = 'catalog:home'
+LOGIN_URL = 'users:login'
+LOGOUT_REDIRECT_URL = 'users:login'
+
+AUTH_USER_MODEL = 'users.User'
