@@ -8,3 +8,4 @@ class User(AbstractUser):
     avatar = models.ImageField(**NULLABLE, upload_to='photos/users/avatars/%Y/%m/%d', verbose_name='Аватар')
     phone = models.CharField(**NULLABLE, max_length=35, verbose_name='Телефон')
     country = models.CharField(**NULLABLE, max_length=150, verbose_name='Страна')
+    email = models.EmailField(max_length=50, unique=True, verbose_name='Электронная почта')
