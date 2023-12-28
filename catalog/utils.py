@@ -1,11 +1,8 @@
 import random
 
-from django import forms
 from django.db import transaction
-from django.forms import inlineformset_factory
 
-from catalog.forms import VersionForm, ProductVersionFormSet
-from catalog.models import Version
+from catalog.forms import ProductVersionFormSet
 
 
 def create_product(size: int = 10) -> tuple:
@@ -72,30 +69,6 @@ def create_product(size: int = 10) -> tuple:
     return res_categories, res_products
 
 
-def format_to_row(products: list, count_rows: int = 4) -> list:
-    """ Функция для форматирования данных в нужное число колонок. """
-
-    res = []
-    for i in range(len(products)):
-        if i % count_rows == 0:
-            row = []
-            for j in range(i, i + count_rows):
-                if j >= len(products):
-                    break
-                row.append(products[j])
-            res.append(row)
-    return res
-
-
-menu = [
-    {'title': 'Главная', 'url_name': 'catalog:home'},
-    {'title': 'Каталог', 'url_name': 'catalog:list_product'},
-    {'title': 'Категории', 'url_name': 'catalog:list_category'},
-    {'title': 'Добавить продукт', 'url_name': 'catalog:create_product'},
-    {'title': 'Контакты', 'url_name': 'catalog:contacts'},
-]
-
-
 class MenuMixin:
     page_title: str = None
     page_description: str = None
@@ -112,9 +85,6 @@ class MenuMixin:
 
         if self.page_description is not None:
             context['description'] = self.page_description
-
-        if 'menu' not in context:
-            context['menu'] = menu
 
         return context
 

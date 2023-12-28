@@ -20,14 +20,31 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% with url_name=request.resolver_match.url_name %}
-                    <li class="nav-item" style="margin: 2px">
-                        {% for m in menu %}
-                            <a class="p-2 btn btn-outline-warning {% if request.resolver_match.url_name == m.url_name %}active{% endif %}"
-                               href="{% if m.url_name %}{% url m.url_name %}{% else %}#{% endif %}">
-                                {{ m.title }}
-                            </a>
-                        {% endfor %}
-                    </li>
+
+                    {% for m in menu %}
+                        <li class="nav-item" style="margin: 2px">
+                            {% if m.submenu %}
+                                <div class="dropdown">
+                                    <a class="p-2 btn btn-outline-warning dropdown-toggle" role="button"
+                                       id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ m.title }}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        {% for s in m.submenu %}
+                                            <li>
+                                                <a class="dropdown-item " href="{% url s.url_name %}">{{ s.title }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <a class="p-2 btn btn-outline-warning {% if request.resolver_match.url_name == m.url_name %}active{% endif %}"
+                                   href="{% if m.url_name %}{% url m.url_name %}{% else %}#{% endif %}">
+                                    {{ m.title }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
                 {% endwith %}
             </ul>
 

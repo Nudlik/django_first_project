@@ -5,7 +5,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from blog.forms import PostForm
 from blog.models import Post
-from blog.utils import MenuMixin
+from catalog.utils import MenuMixin
 from config.settings import env
 
 
