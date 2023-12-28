@@ -34,7 +34,7 @@
             <ul class="navbar-nav mb-2 mb-lg-0" style="margin: 2px">
                 {% if user.is_authenticated %}
                     <li class="nav-item last">
-                    <a class="p-2 btn btn-outline-warning" href="#">{{ user.username }}</a>
+                    <a class="p-2 btn btn-outline-warning" href="{% url 'user:profile' %}">{{ user.username }}</a>
                     <a class="p-2 btn btn-outline-warning" href="{% url 'user:logout' %}">Выйти</a>
 
                 {% else %}

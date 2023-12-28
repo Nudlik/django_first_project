@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 
 
 class WidgetsMixin:
@@ -10,10 +10,11 @@ class WidgetsMixin:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        widgets = self.Meta.widgets
-        if widgets:
-            for field_name, widget in widgets.items():
-                self.fields[field_name].widget = widget
+        if hasattr(self.Meta, 'widgets'):
+            widgets = self.Meta.widgets
+            if widgets:
+                for field_name, widget in widgets.items():
+                    self.fields[field_name].widget = widget
 
 
 class LabelsMixin:
@@ -23,10 +24,11 @@ class LabelsMixin:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        labels = self.Meta.labels
-        if labels:
-            for field_name, label in labels.items():
-                self.fields[field_name].label = label
+        if hasattr(self.Meta, 'labels'):
+            labels = self.Meta.labels
+            if labels:
+                for field_name, label in labels.items():
+                    self.fields[field_name].label = label
 
 
 class UserLoginFrom(WidgetsMixin, LabelsMixin, AuthenticationForm):
@@ -64,3 +66,50 @@ class UserRegisterFrom(WidgetsMixin, UserCreationForm):
             raise forms.ValidationError('Пользователь с таким E-mail уже существует')
         return email
 
+
+class UserProfileForm(forms.ModelForm):
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'first_name', 'last_name']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ваш email'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваше имя'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваша фамилия'}),
+        }
+        labels = {
+            'username': 'Логин',
+        }
+
+
+class UserProfileUpdateFrom(LabelsMixin, WidgetsMixin, forms.ModelForm):
+    username = forms.CharField(disabled=True)
+    email = forms.EmailField(disabled=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'first_name', 'last_name', 'avatar']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ваш email'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваше имя'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваша фамилия'}),
+            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'username': 'Логин',
+        }
+
+
+class UserPasswordChangeForm(WidgetsMixin, PasswordChangeForm):
+    old_password = forms.CharField(label='Старый пароль')
+    new_password1 = forms.CharField(label='Новый пароль')
+    new_password2 = forms.CharField(label='Подтверждение пароля')
+
+    class Meta:
+        widgets = {
+            'old_password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'new_password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'new_password2': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
