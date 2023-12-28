@@ -13,4 +13,12 @@ def menu(request):
         ]},
         {'title': 'Контакты', 'url_name': 'catalog:contacts'},
     ]
+    for i in menu_list:
+        if 'submenu' in i:
+            for j in i['submenu']:
+                if j['url_name'] == request.resolver_match.view_name:
+                    j['active'] = True
+                    i['active'] = True
+                    break
+
     return {'menu': menu_list}
