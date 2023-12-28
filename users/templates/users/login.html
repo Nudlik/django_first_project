@@ -2,12 +2,12 @@
 
 {% block content %}
 
-    <form action="" method="post">
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            <div class="col">
-                <div class="card h-100">
-                    <div class="card-header bg-dark-subtle">{{ title }}</div>
-                    <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header bg-dark-subtle">{{ title }}</div>
+                <div class="card-body">
+                    <form action="" method="post">
 
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ next }}"/>
@@ -26,15 +26,18 @@
                             <button type="submit" class="btn btn-lg btn-block btn-outline-warning">
                                 {{ button }}
                             </button>
-                            <button type="submit" class="btn btn-lg btn-block btn-outline-warning" href="#">
-                                Забыли пароль?
-                            </button>
                         </p>
 
-                    </div>
+                    </form>
+                    <p>
+                        <a type="submit" class="btn btn-lg btn-block btn-outline-warning"
+                                href="{% url 'user:password_reset' %}">
+                            Забыли пароль?
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
 
 {% endblock %}

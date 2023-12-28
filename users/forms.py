@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm, PasswordResetForm, \
+    SetPasswordForm
 
 
 class WidgetsMixin:
@@ -35,7 +36,7 @@ class UserLoginFrom(WidgetsMixin, LabelsMixin, AuthenticationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'password', 'username', 'username1']
+        fields = ['username', 'password', 'username']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ваш пароль'}),
@@ -110,6 +111,23 @@ class UserPasswordChangeForm(WidgetsMixin, PasswordChangeForm):
     class Meta:
         widgets = {
             'old_password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'new_password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'new_password2': forms.PasswordInput(attrs={'class': 'form-control'}),
+        }
+
+
+class UserPasswordResetForm(WidgetsMixin, PasswordResetForm):
+
+    class Meta:
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ваш email'}),
+        }
+
+
+class UserSetPasswordForm(WidgetsMixin, SetPasswordForm):
+
+    class Meta:
+        widgets = {
             'new_password1': forms.PasswordInput(attrs={'class': 'form-control'}),
             'new_password2': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
