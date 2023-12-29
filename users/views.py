@@ -1,11 +1,18 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.tokens import default_token_generator as token_generator
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView, \
+    PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.core.exceptions import ValidationError
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.utils.http import urlsafe_base64_decode
+from django.views import View
+from django.views.generic import UpdateView, DetailView, FormView
 
 from users.forms import UserLoginFrom, UserRegisterFrom, UserProfileUpdateFrom, UserProfileForm, UserPasswordChangeForm, \
     UserPasswordResetForm, UserSetPasswordForm
+from users.utils import send_email_for_verify
 
 
 class UserLoginView(LoginView):
@@ -21,25 +28,45 @@ class UserLogoutView(LogoutView):
     pass
 
 
-class UserRegisterView(CreateView):
+class UserRegisterView(FormView):
     form_class = UserRegisterFrom
     model = get_user_model()
-    success_url = reverse_lazy('user:login')
-    extra_context = {
-        'title': 'Регистрация',
-        'button': 'Зарегистрироваться',
-    }
+    template_name = 'users/user_form.html'
+    success_url = reverse_lazy('user:confirm_email')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Регистрация'
+        context['button'] = 'Зарегистрироваться'
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password1')
+        user = authenticate(email=email, password=password)
+        if not user.email_verify:
+            send_email_for_verify(self.request, user)
+        return super().form_valid(form)
 
 
 class UserProfileView(LoginRequiredMixin, DetailView):
     form_class = UserProfileForm
-    extra_context = {
-        'title': 'Мой профиль',
-        'button': 'Редактировать',
-    }
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Мой профиль'
+
+        attrs = [('username', 'Никнейм'), ('email', 'Почта'), ('first_name', 'Имя'),
+                 ('last_name', 'Фамилия'), ('phone', 'Телефон'), ('country', 'Страна')]
+        items = context['user']
+        profile = {attrs[i][1]: getattr(items, attrs[i][0]) for i in range(len(attrs)) if hasattr(items, attrs[i][0])}
+        context['profile'] = profile
+
+        return context
 
 
 class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
@@ -107,3 +134,29 @@ class UserPasswordResetCompleteView(PasswordResetCompleteView):
     extra_context = {
         'title': 'Восстановление пароля завершено',
     }
+
+
+class EmailVerify(View):
+    template_name = 'users/verify_email.html'
+
+    def get(self, request, uidb64, token):
+        user = self.get_user(uidb64)
+
+        if user is not None and token_generator.check_token(user, token):
+            user.email_verify = True
+            user.save()
+            login(request, user, backend='users.authentication.EmailAuthBackend')
+            return redirect('catalog:home')
+        elif request.user.is_authenticated:
+            return redirect('catalog:home')
+
+        return redirect('user:invalid_verify')
+
+    @staticmethod
+    def get_user(uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist, ValidationError):
+            user = None
+        return user

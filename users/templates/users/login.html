@@ -26,13 +26,22 @@
                             <button type="submit" class="btn btn-lg btn-block btn-outline-warning">
                                 {{ button }}
                             </button>
-                        </p>
+
+{#TODO: по хорошему нужно сделать отдельную вьюху либо с какой то частотой чистить бд с полями верифай_емейл=0#}
+{#                        {% if form.errors %}#}
+{#                            <a class="small text-muted" href="{% url 'user:verify_email' %}">Выслать письмо еще раз?</a>#}
+{#                        {% endif %}#}
+{#                        </p>#}
 
                     </form>
                     <p>
                         <a type="submit" class="btn btn-lg btn-block btn-outline-warning"
-                                href="{% url 'user:password_reset' %}">
+                           href="{% url 'user:password_reset' %}">
                             Забыли пароль?
+                        </a>
+                        <a type="submit" class="btn btn-lg btn-block btn-outline-warning"
+                           href="{% url 'user:register' %}">
+                            Регистрация
                         </a>
                     </p>
                 </div>

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.shortcuts import get_object_or_404
@@ -81,7 +82,7 @@ class ProductDetailView(MenuMixin, DetailView):
         return self.get(request)
 
 
-class ProductCreateView(MenuMixin, VersionMixin, CreateView):
+class ProductCreateView(MenuMixin, LoginRequiredMixin, VersionMixin, CreateView):
     model = Product
     form_class = AddProductForm
     success_url = reverse_lazy('catalog:list_product')

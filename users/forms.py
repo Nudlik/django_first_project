@@ -1,11 +1,12 @@
 from django import forms
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm, PasswordResetForm, \
     SetPasswordForm
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 class WidgetsMixin:
-
     class Meta:
         widgets = None
 
@@ -19,7 +20,6 @@ class WidgetsMixin:
 
 
 class LabelsMixin:
-
     class Meta:
         labels = None
 
@@ -33,10 +33,9 @@ class LabelsMixin:
 
 
 class UserLoginFrom(WidgetsMixin, LabelsMixin, AuthenticationForm):
-
     class Meta:
         model = get_user_model()
-        fields = ['username', 'password', 'username']
+        fields = ['username', 'password']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'}),
             'password': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ваш пароль'}),
@@ -45,20 +44,39 @@ class UserLoginFrom(WidgetsMixin, LabelsMixin, AuthenticationForm):
             'username': 'Логин / E-mail',
         }
 
+    def clean(self):
+        email = self.cleaned_data.get('username')  # or self.cleaned_data.get('email')
+        password = self.cleaned_data.get('password')
+
+        if email is not None and password is not None:
+            self.user_cache = authenticate(self.request, email=email, password=password)
+
+            if self.user_cache is None or not self.user_cache.email_verify:
+                raise ValidationError('Электронная почта не подтверждена, проверьте свою электронную почту',
+                                      code='invalid_login')
+
+            if self.user_cache is None:
+                raise self.get_invalid_login_error()
+            else:
+                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
+
 
 class UserRegisterFrom(WidgetsMixin, UserCreationForm):
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete': 'email'})
+    )
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = get_user_model()
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['email', 'password1', 'password2']
         widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ваш email'}),
             'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ваш пароль'}),
             'password2': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Повторите пароль'}),
-        }
-        labels = {
-            'username': 'Логин',
         }
 
     def clean_email(self):
@@ -69,7 +87,6 @@ class UserRegisterFrom(WidgetsMixin, UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-
     class Meta:
         model = get_user_model()
         fields = ['username', 'email', 'first_name', 'last_name']
@@ -85,18 +102,19 @@ class UserProfileForm(forms.ModelForm):
 
 
 class UserProfileUpdateFrom(LabelsMixin, WidgetsMixin, forms.ModelForm):
-    username = forms.CharField(disabled=True)
     email = forms.EmailField(disabled=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'first_name', 'last_name', 'avatar']
+        fields = ['username', 'email', 'first_name', 'last_name', 'avatar', 'phone', 'country']
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш логин'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ваш email'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваше имя'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваша фамилия'}),
-            'avatar': forms.FileInput(attrs={'class': 'form-control'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваш телефон'}),
+            'country': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ваша страна проживания'}),
         }
         labels = {
             'username': 'Логин',
@@ -117,7 +135,6 @@ class UserPasswordChangeForm(WidgetsMixin, PasswordChangeForm):
 
 
 class UserPasswordResetForm(WidgetsMixin, PasswordResetForm):
-
     class Meta:
         widgets = {
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Ваш email'}),
@@ -125,7 +142,6 @@ class UserPasswordResetForm(WidgetsMixin, PasswordResetForm):
 
 
 class UserSetPasswordForm(WidgetsMixin, SetPasswordForm):
-
     class Meta:
         widgets = {
             'new_password1': forms.PasswordInput(attrs={'class': 'form-control'}),

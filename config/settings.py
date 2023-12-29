@@ -156,7 +156,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'users.authentication.EmailAuthBackend',
+    'users.authentication.UsernameAuthBackend',
 ]
 
 # почтовые настройки для рассылок

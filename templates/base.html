@@ -25,14 +25,16 @@
                         <li class="nav-item" style="margin: 2px">
                             {% if m.submenu %}
                                 <div class="dropdown">
-                                    <a class="p-2 btn btn-outline-warning dropdown-toggle {% if m.active %}active{% endif %}" role="button"
+                                    <a class="p-2 btn btn-outline-warning dropdown-toggle {% if m.active %}active{% endif %}"
+                                       role="button"
                                        id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ m.title }}
                                     </a>
                                     <ul class="dropdown-menu">
                                         {% for s in m.submenu %}
                                             <li>
-                                                <a class="dropdown-item {% if s.active %}text-warning{% endif %}" href="{% url s.url_name %}">{{ s.title }}</a>
+                                                <a class="dropdown-item {% if s.active %}text-warning{% endif %}"
+                                                   href="{% url s.url_name %}">{{ s.title }}</a>
                                             </li>
                                         {% endfor %}
                                     </ul>
@@ -51,7 +53,13 @@
             <ul class="navbar-nav mb-2 mb-lg-0" style="margin: 2px">
                 <li class="nav-item last">
                     {% if user.is_authenticated %}
-                        <a class="p-2 btn btn-outline-warning" href="{% url 'user:profile' %}">{{ user.username }}</a>
+                        <a class="p-2 btn btn-outline-warning" href="{% url 'user:profile' %}">
+                            {% if user.username %}
+                                {{ user.username }}
+                            {% else %}
+                                {{ user.email|default:'Не указано' }}
+                            {% endif %}
+                        </a>
                         <a class="p-2 btn btn-outline-warning" href="{% url 'user:logout' %}">Выйти</a>
 
                     {% else %}
@@ -85,7 +93,7 @@
                 <h5>Категории</h5>
                 <ul class="list-unstyled text-small">
                     <li><a class="text-muted" href="{% url 'catalog:list_product' %}">Магазин</a></li>
-                    <li><a class="text-muted" href="#">Статьи</a></li>
+                    <li><a class="text-muted" href="{% url 'blog:post_list' %}">Статьи</a></li>
                 </ul>
             </div>
             <div class="col-6 col-md">

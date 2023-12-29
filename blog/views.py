@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.urls import reverse_lazy, reverse
@@ -42,13 +43,13 @@ class PostDetailView(MenuMixin, DetailView):
         return obj
 
 
-class PostCreateView(MenuMixin, CreateView):
+class PostCreateView(MenuMixin, LoginRequiredMixin, CreateView):
     form_class = PostForm
     template_name = 'blog/post_form.html'
     page_title = 'Страница для создания статьи'
 
 
-class PostUpdateView(MenuMixin, UpdateView):
+class PostUpdateView(MenuMixin, LoginRequiredMixin, UpdateView):
     form_class = PostForm
     template_name = 'blog/post_form.html'
     page_title = 'Страница для редактирования статьи'
@@ -57,7 +58,7 @@ class PostUpdateView(MenuMixin, UpdateView):
         return Post.objects.filter(slug=self.kwargs['slug'])
 
 
-class PostDeleteView(MenuMixin, DeleteView):
+class PostDeleteView(MenuMixin, LoginRequiredMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('blog:post_list')
     page_title = 'Страницы для удаление статьи'
