@@ -10,14 +10,14 @@ from django.utils.http import urlsafe_base64_decode
 from django.views import View
 from django.views.generic import UpdateView, DetailView, FormView
 
-from users.forms import UserLoginFrom, UserRegisterFrom, UserProfileUpdateFrom, UserProfileForm, UserPasswordChangeForm, \
+from users.forms import UserLoginForm, UserRegisterForm, UserProfileUpdateForm, UserProfileForm, UserPasswordChangeForm, \
     UserPasswordResetForm, UserSetPasswordForm
 from users.utils import send_email_for_verify
 
 
 class UserLoginView(LoginView):
     template_name = 'users/login.html'
-    form_class = UserLoginFrom
+    form_class = UserLoginForm
     extra_context = {
         'title': 'Авторизация',
         'button': 'Войти',
@@ -29,7 +29,7 @@ class UserLogoutView(LogoutView):
 
 
 class UserRegisterView(FormView):
-    form_class = UserRegisterFrom
+    form_class = UserRegisterForm
     model = get_user_model()
     template_name = 'users/user_form.html'
     success_url = reverse_lazy('user:confirm_email')
@@ -70,7 +70,7 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 
 
 class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
-    form_class = UserProfileUpdateFrom
+    form_class = UserProfileUpdateForm
     extra_context = {
         'title': 'Редактирование профиля',
         'button': 'Сохранить',
@@ -145,7 +145,7 @@ class EmailVerify(View):
         if user is not None and token_generator.check_token(user, token):
             user.email_verify = True
             user.save()
-            login(request, user, backend='users.authentication.EmailAuthBackend')
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('catalog:home')
         elif request.user.is_authenticated:
             return redirect('catalog:home')
@@ -160,3 +160,22 @@ class EmailVerify(View):
         except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist, ValidationError):
             user = None
         return user
+
+
+class UserVerifyResendView(PasswordResetView):
+    template_name = 'users/password_reset_form.html'
+    email_template_name = 'users/verify_email.html'
+    success_url = reverse_lazy('users:confirm_email')
+    form_class = UserPasswordResetForm
+    extra_context = {
+        'title': 'Повторная отправка верефикации на E-mail',
+        'button': 'Отправить',
+    }
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+        user = get_user_model().objects.filter(email=email, email_verify=False)
+        if user.exists():
+            return super().form_valid(form)
+        return redirect('user:confirm_email')  # тут нужно подумать, в плане безопасности использования invalid_verify
+        # или сделать огранниченое количество попыток на данных функционал

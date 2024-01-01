@@ -27,11 +27,10 @@
                                 {{ button }}
                             </button>
 
-{#TODO: по хорошему нужно сделать отдельную вьюху либо с какой то частотой чистить бд с полями верифай_емейл=0#}
-{#                        {% if form.errors %}#}
-{#                            <a class="small text-muted" href="{% url 'user:verify_email' %}">Выслать письмо еще раз?</a>#}
-{#                        {% endif %}#}
-{#                        </p>#}
+                        {% if form.errors %}
+                            <a class="small text-muted" href="{% url 'user:resend_email' %}">Выслать письмо еще раз?</a>
+                        {% endif %}
+                        </p>
 
                     </form>
                     <p>

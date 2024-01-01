@@ -32,7 +32,7 @@ class LabelsMixin:
                     self.fields[field_name].label = label
 
 
-class UserLoginFrom(WidgetsMixin, LabelsMixin, AuthenticationForm):
+class UserLoginForm(WidgetsMixin, LabelsMixin, AuthenticationForm):
     class Meta:
         model = get_user_model()
         fields = ['username', 'password']
@@ -63,7 +63,7 @@ class UserLoginFrom(WidgetsMixin, LabelsMixin, AuthenticationForm):
         return self.cleaned_data
 
 
-class UserRegisterFrom(WidgetsMixin, UserCreationForm):
+class UserRegisterForm(WidgetsMixin, UserCreationForm):
     email = forms.EmailField(
         label=_("Email"),
         max_length=254,
@@ -78,12 +78,6 @@ class UserRegisterFrom(WidgetsMixin, UserCreationForm):
             'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ваш пароль'}),
             'password2': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Повторите пароль'}),
         }
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if get_user_model().objects.filter(email=email).exists():
-            raise forms.ValidationError('Пользователь с таким E-mail уже существует')
-        return email
 
 
 class UserProfileForm(forms.ModelForm):
@@ -101,7 +95,7 @@ class UserProfileForm(forms.ModelForm):
         }
 
 
-class UserProfileUpdateFrom(LabelsMixin, WidgetsMixin, forms.ModelForm):
+class UserProfileUpdateForm(LabelsMixin, WidgetsMixin, forms.ModelForm):
     email = forms.EmailField(disabled=True)
 
     class Meta:
