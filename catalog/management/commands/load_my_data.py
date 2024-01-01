@@ -3,6 +3,7 @@ from django.db import connection
 
 from blog.models import Post
 from catalog.models import Category, Product
+from users.models import User
 
 
 class Command(BaseCommand):
@@ -13,6 +14,7 @@ class Command(BaseCommand):
             Product,
             Category,
             Post,
+            User,
         )
         for model in models:
             model.objects.all().delete()
@@ -25,3 +27,4 @@ class Command(BaseCommand):
 
         call_command('loaddata', 'catalog/fixtures/catalog_data.json')
         call_command('loaddata', 'blog/fixtures/blog_data.json')
+        call_command('loaddata', 'users/fixtures/users_data.json')

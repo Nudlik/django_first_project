@@ -171,13 +171,13 @@
     "model": "catalog.product",
     "pk": 51,
     "fields": {
-        "title": "казин1",
-        "description": "",
+        "title": "казин1о",
+        "description": "12345",
         "photo": "",
         "category": 1,
         "price": "0.00",
         "time_create": "2023-12-24T02:35:55.949Z",
-        "time_update": "2023-12-24T03:51:34.712Z",
+        "time_update": "2023-12-27T09:15:11.939Z",
         "is_published": true
     }
 },
@@ -343,16 +343,6 @@
 },
 {
     "model": "catalog.version",
-    "pk": 61,
-    "fields": {
-        "product": 51,
-        "version_number": 1,
-        "title": "1",
-        "is_active": false
-    }
-},
-{
-    "model": "catalog.version",
     "pk": 62,
     "fields": {
         "product": 51,
@@ -369,6 +359,16 @@
         "version_number": 3,
         "title": "3",
         "is_active": true
+    }
+},
+{
+    "model": "catalog.version",
+    "pk": 65,
+    "fields": {
+        "product": 51,
+        "version_number": 1,
+        "title": "1",
+        "is_active": false
     }
 },
 {
