@@ -1,4 +1,5 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+import transliterate
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.urls import reverse_lazy, reverse
@@ -43,22 +44,49 @@ class PostDetailView(MenuMixin, DetailView):
         return obj
 
 
-class PostCreateView(MenuMixin, LoginRequiredMixin, CreateView):
+class PostCreateView(LoginRequiredMixin, MenuMixin, CreateView):
     form_class = PostForm
+    model = Post
     template_name = 'blog/post_form.html'
     page_title = 'Страница для создания статьи'
 
+    def form_valid(self, form):
+        slug = transliterate.slugify(form.cleaned_data['title'])
+        if self.model.objects.filter(slug=slug).exists():
+            form.add_error('title', 'Пост с таким slug уже существует')
+            return self.form_invalid(form=form)
 
-class PostUpdateView(MenuMixin, LoginRequiredMixin, UpdateView):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PostUpdateView(UserPassesTestMixin, MenuMixin, UpdateView):
     form_class = PostForm
+    model = Post
     template_name = 'blog/post_form.html'
     page_title = 'Страница для редактирования статьи'
 
     def get_queryset(self):
         return Post.objects.filter(slug=self.kwargs['slug'])
 
+    def test_func(self):
+        check_perms = bool(
+            self.get_object().author == self.request.user
+            or self.request.user.is_superuser
+            or self.request.user.has_perms(['blog.change_post'])
+        )
+        return check_perms
 
-class PostDeleteView(MenuMixin, LoginRequiredMixin, DeleteView):
+
+class PostDeleteView(UserPassesTestMixin, MenuMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('blog:post_list')
     page_title = 'Страницы для удаление статьи'
+
+    def test_func(self):
+        check_perms = bool(
+            self.get_object().author == self.request.user
+            or self.request.user.is_superuser
+            or self.request.user.has_perms(['blog.delete_post'])
+        )
+        return check_perms

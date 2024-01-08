@@ -1,6 +1,7 @@
 import os
 
 from django.template.defaulttags import register
+from django.utils.safestring import mark_safe
 
 from catalog.models import Contact
 
@@ -42,3 +43,10 @@ def button_navigation(paginator, page_obj):
 @register.filter
 def file_exists(path):
     return os.path.exists(path)
+
+
+@register.filter
+def get_name_or_email(user, default='Неизвестно'):
+    if user:
+        return user.username or user.email or default
+    return default

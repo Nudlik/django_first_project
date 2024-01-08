@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
@@ -17,15 +18,24 @@ class Product(models.Model):
     title = models.CharField(max_length=255, verbose_name='Название')
     description = models.TextField(**NULLABLE, verbose_name='Описание')
     photo = models.ImageField(upload_to='photos/products/%Y/%m/%d/', **NULLABLE, verbose_name='Фото')
-    category = models.ForeignKey(to='Category',
-                                 on_delete=models.PROTECT,
-                                 related_name='products',
-                                 verbose_name='Категория'
-                                 )
+    category = models.ForeignKey(
+        to='Category',
+        on_delete=models.PROTECT,
+        related_name='products',
+        verbose_name='Категория'
+    )
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name='Цена')
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Дата изменения')
     is_published = models.BooleanField(choices=Status.choices, default=Status.PUBLISHED, verbose_name='Опубликовано')
+    owner = models.ForeignKey(
+        to=get_user_model(),
+        on_delete=models.CASCADE,
+        default=None,
+        **NULLABLE,
+        related_name='product',
+        verbose_name='Владелец'
+    )
 
     objects = models.Manager()
     published = PublishedManager()

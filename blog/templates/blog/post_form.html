@@ -9,10 +9,13 @@
                         {% csrf_token %}
                         <div class="row-form-errors">{{ form.non_field_errors }}</div>
 
-                        {% for f in form %}
-                            <p><label class="mb-2 mx-2" for="{{ f.id_for_label }}">{{ f.label }}: </label>{{ f }} {{ f.help_text }}
+                        {% for field in form %}
+                            <p><label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
                             </p>
-                            <div>{{ f.errors }}</div>
+                            <div class="form-error text-danger">
+                                <p>{{ field.errors }}</p>
+                            </div>
                         {% endfor %}
 
                         <a type="submit" class="btn btn-lg btn-block btn-outline-warning" href="javascript:history.go(-1)">Назад</a>

@@ -1,9 +1,10 @@
-from blog.models import Post
 from django import forms
+
+from blog.models import Post
 
 
 class PostForm(forms.ModelForm):
-    ALLOWED_CHARS = set('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя0123456789- ')
+    ALLOWED_CHARS = set('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯабвгдеёжзийклмнопрстуфхцчшщьыъэюя- ')
 
     class Meta:
         model = Post
@@ -17,5 +18,5 @@ class PostForm(forms.ModelForm):
     def clean_title(self):
         title = self.cleaned_data['title']
         if not all(char in self.ALLOWED_CHARS for char in title):
-            raise forms.ValidationError('Должны быть только: русские символы, цифры, дефис или пробел')
+            raise forms.ValidationError('Должны быть только: русские символы, дефис или пробел')
         return title

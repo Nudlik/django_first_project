@@ -33,7 +33,8 @@
                         <small class="text-body-secondary">Категория: <a
                                 href="{{ product.category.get_absolute_url }}"
                                 class="text-warning">{{ product.category }}</a></small><br>
-                        <small class="text-body-secondary">Обновлено: {{ product.time_update|date:'d-m-Y H:i:s' }}</small>
+                        <small class="text-body-secondary">Обновлено: {{ product.time_update|date:'d-m-Y H:i:s' }}</small><br>
+                        <small class="text-body-secondary">Автор: {{ product.owner|get_name_or_email }}</small>
                     </div>
                 </div>
             </div>

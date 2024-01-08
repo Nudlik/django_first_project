@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.shortcuts import get_object_or_404
@@ -82,15 +82,19 @@ class ProductDetailView(MenuMixin, DetailView):
         return self.get(request)
 
 
-class ProductCreateView(MenuMixin, LoginRequiredMixin, VersionMixin, CreateView):
+class ProductCreateView(LoginRequiredMixin, MenuMixin, VersionMixin, CreateView):
     model = Product
     form_class = AddProductForm
     success_url = reverse_lazy('catalog:list_product')
     page_title = 'Добавить продукт'
     page_description = 'Здесь можно добавить новый продукт, чтобы он появился на сайте'
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
-class ProductUpdateView(MenuMixin, VersionMixin, UpdateView):
+
+class ProductUpdateView(UserPassesTestMixin, MenuMixin, VersionMixin, UpdateView):
     model = Product
     form_class = AddProductForm
     page_title = 'Страница для редактирования продукта'
@@ -102,8 +106,24 @@ class ProductUpdateView(MenuMixin, VersionMixin, UpdateView):
     def get_success_url(self):
         return reverse('catalog:view_product', kwargs={'pk': self.object.pk})
 
+    def test_func(self):
+        check_perms = bool(
+            self.get_object().owner == self.request.user
+            or self.request.user.is_superuser
+            or self.request.user.has_perms(['catalog.change_product'])
+        )
+        return check_perms
 
-class ProductDeleteView(MenuMixin, DeleteView):
+
+class ProductDeleteView(UserPassesTestMixin, MenuMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:list_product')
     page_title = 'Страница для удаление статьи'
+
+    def test_func(self):
+        check_perms = bool(
+            self.get_object().owner == self.request.user
+            or self.request.user.is_superuser
+            or self.request.user.has_perms(['catalog.delete_product'])
+        )
+        return check_perms

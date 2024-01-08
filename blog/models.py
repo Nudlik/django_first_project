@@ -1,4 +1,5 @@
 import transliterate
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
@@ -20,6 +21,14 @@ class Post(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
     photo = models.ImageField(upload_to='photos/blog/%Y/%m/%d/', **NULLABLE, default=None, verbose_name='Фото')
     view_count = models.IntegerField(default=0, verbose_name='Количество просмотров')
+    author = models.ForeignKey(
+        to=get_user_model(),
+        on_delete=models.SET_NULL,
+        default=None,
+        **NULLABLE,
+        related_name='post',
+        verbose_name='Автор'
+    )
 
     objects = models.Manager()
     published = PublishedManager()

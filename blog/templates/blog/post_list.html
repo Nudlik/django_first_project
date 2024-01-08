@@ -30,6 +30,7 @@
                     <div class="card-footer">
                         <small class="text-body-secondary">Обновлено: {{ post.time_update|date:'d-m-Y H:i:s' }}</small><br>
                         <small class="text-body-secondary">Кол-во просмотров: {{ post.view_count }}</small><br>
+                        <small class="text-body-secondary">Автор: {{ post.author|get_name_or_email }}</small><br>
                     </div>
                 </div>
             </div>
