@@ -47,6 +47,11 @@ class Product(models.Model):
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
         ordering = ['-time_create']
+        permissions = [
+            ('set_is_published', 'Может менять статус публикации'),
+            ('set_description', 'Может изменять описание'),
+            ('set_category', 'Может изменять категорию'),
+        ]
 
     def get_absolute_url(self):
         return reverse('catalog:view_product', kwargs={'pk': self.pk})
