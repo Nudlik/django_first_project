@@ -117,7 +117,8 @@ class ProductUpdateView(UserPassesTestMixin, MenuMixin, VersionMixin, UpdateView
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         if self.request.user != self.get_object().owner:
-            for field in form.fields:
+            fields = [i for i in form.fields]
+            for field in fields:
                 if not self.request.user.has_perm(f'catalog.set_{field}'):
                     del form.fields[field]
         return form
