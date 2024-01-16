@@ -1,8 +1,13 @@
 import random
 
+from django.core.cache import cache
 from django.db import transaction
+from django.db.models import QuerySet, Model
+from django.http import Http404
+from django.shortcuts import _get_queryset
 
 from catalog.forms import ProductVersionFormSet
+from config import settings
 
 
 def create_product(size: int = 10) -> tuple:
@@ -115,3 +120,37 @@ class VersionMixin:
                     return self.form_invalid(form)
 
         return super().form_valid(form)
+
+
+def cache_for_queryset(key: str, queryset: QuerySet, time: int = settings.CACHE_TIMEOUT) -> QuerySet:
+    """ Кеширует queryset запрос к базе данных """
+
+    if not settings.CACHES_ENABLED:
+        return queryset
+    queryset_cache = cache.get(key)
+    if queryset_cache is not None:
+        return queryset_cache
+    cache.set(key, queryset, time)
+    return queryset
+
+
+def cache_for_object(klass, *args, **kwargs) -> QuerySet | Model | Http404:
+    """ Кеширует object запрос к базе данных или возвращает 404 """
+
+    queryset = _get_queryset(klass)
+    if not hasattr(queryset, "get"):
+        klass__name = (
+            klass.__name__ if isinstance(klass, type) else klass.__class__.__name__
+        )
+        raise ValueError(
+            "First argument to get_object_or_404() must be a Model, Manager, "
+            "or QuerySet, not '%s'." % klass__name
+        )
+    try:
+        queryset = queryset.get(*args, **kwargs)
+        pk = queryset.pk
+        return cache_for_queryset(f"{klass.__name__}_{pk}", queryset)
+    except queryset.model.DoesNotExist:
+        raise Http404(
+            "No %s matches the given query." % queryset.model._meta.object_name
+        )

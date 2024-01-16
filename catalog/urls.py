@@ -1,13 +1,15 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from catalog import views
 from catalog.apps import CatalogConfig
+from config import settings
 
 app_name = CatalogConfig.name
 
 urlpatterns = [
-    path('', views.IndexTemplateView.as_view(), name='home'),
-    path('contacts/', views.ContactsView.as_view(), name='contacts'),
+    path('', cache_page(settings.CACHE_TIMEOUT)(views.IndexTemplateView.as_view()), name='home'),
+    path('contacts/', cache_page(settings.CACHE_TIMEOUT)(views.ContactsView.as_view()), name='contacts'),
 
     path('category/', views.CategoryListView.as_view(), name='list_category'),
     path('category/<int:pk>/', views.CategoryDetailView.as_view(), name='view_category'),

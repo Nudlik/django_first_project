@@ -1,14 +1,14 @@
 import transliterate
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
+from django.core.cache import cache
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from blog.forms import PostForm
 from blog.models import Post
-from catalog.utils import MenuMixin
-from config.settings import env
+from blog.utils import send_mail_custom
+from catalog.utils import MenuMixin, cache_for_queryset
+from config import settings
 
 
 class PostListView(MenuMixin, ListView):
@@ -18,7 +18,11 @@ class PostListView(MenuMixin, ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        return self.model.published.all()
+        queryset = cache_for_queryset(
+            key=settings.CACHE_POST_LIST,
+            queryset=self.model.published.all().select_related('author')
+        )
+        return queryset
 
 
 class PostDetailView(MenuMixin, DetailView):
@@ -30,16 +34,7 @@ class PostDetailView(MenuMixin, DetailView):
         obj.save(update_fields=['view_count'])
 
         if obj.view_count == 100:
-            site = get_current_site(self.request)
-            post_url = reverse('blog:post_detail', args=[obj.slug])
-            absolute_url = f'{self.request.scheme}://{site.domain}{post_url}'
-            send_mail(
-                subject=f'Пост "{obj.title}" набрал 100 просмотров',
-                message=f'Поздравляю и тд и тп... перейдите по ссылке для просмотра {absolute_url}',
-                from_email=env.str('EMAIL_HOST_USER'),
-                recipient_list=[env.str('EMAIL_HOST_USER')],
-                fail_silently=False,
-            )
+            send_mail_custom(self.request, obj)
 
         return obj
 
@@ -49,6 +44,10 @@ class PostCreateView(LoginRequiredMixin, MenuMixin, CreateView):
     model = Post
     template_name = 'blog/post_form.html'
     page_title = 'Страница для создания статьи'
+
+    def get_success_url(self):
+        cache.delete(settings.CACHE_POST_LIST)
+        return reverse('blog:post_detail', kwargs={'slug': self.object.slug})
 
     def form_valid(self, form):
         slug = transliterate.slugify(form.cleaned_data['title'])
@@ -66,6 +65,10 @@ class PostUpdateView(UserPassesTestMixin, MenuMixin, UpdateView):
     template_name = 'blog/post_form.html'
     page_title = 'Страница для редактирования статьи'
 
+    def get_success_url(self):
+        cache.delete(settings.CACHE_POST_LIST)
+        return reverse('blog:post_detail', kwargs={'slug': self.object.slug})
+
     def get_queryset(self):
         return Post.objects.filter(slug=self.kwargs['slug'])
 
@@ -82,6 +85,10 @@ class PostDeleteView(UserPassesTestMixin, MenuMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('blog:post_list')
     page_title = 'Страницы для удаление статьи'
+
+    def get_success_url(self):
+        cache.delete(settings.CACHE_POST_LIST)
+        return reverse('blog:post_list')
 
     def test_func(self):
         check_perms = bool(

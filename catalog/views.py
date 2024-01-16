@@ -1,13 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
+from config import settings
 from .forms import AddProductForm
 from .models import Product, Category, Contact
-from .utils import MenuMixin, VersionMixin
+from .utils import MenuMixin, VersionMixin, cache_for_queryset
 
 
 class IndexTemplateView(MenuMixin, TemplateView):
@@ -32,9 +34,14 @@ class CategoryListView(MenuMixin, ListView):
     page_description = 'Таблица всех категорий продуктов на сайте'
 
     def get_queryset(self):
-        return Category.objects.annotate(total_products=Count('products'),
-                                         total_price=Sum('products__price')
-                                         ).order_by('pk')
+        queryset = cache_for_queryset(
+            key=settings.CACHE_CATEGORY_LIST,
+            queryset=Category.objects.annotate(
+                total_products=Count('products'),
+                total_price=Sum('products__price')
+            ).order_by('pk')
+        )
+        return queryset
 
 
 class CategoryDetailView(MenuMixin, DetailView):
@@ -46,7 +53,10 @@ class CategoryDetailView(MenuMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         category = self.get_object()
-        products = Product.objects.filter(category=category).select_related('category')
+        products = cache_for_queryset(
+            key=settings.CACHE_CATEGORY_PRODUCTS,
+            queryset=Product.objects.filter(category=category).select_related('category')
+        )
         paginator = Paginator(products, per_page=3)
         page_num = self.request.GET.get('page')
         page_obj = paginator.get_page(page_num)
@@ -65,7 +75,11 @@ class ProductListView(MenuMixin, ListView):
                         'и примеров товаров, который вы бы хотели продать')
 
     def get_queryset(self):
-        return Product.objects.filter(version__is_active=True).order_by('-time_update').select_related('category')
+        queryset = cache_for_queryset(
+            key=settings.CACHE_PRODUCT_LIST,
+            queryset=Product.objects.filter(version__is_active=True).order_by('-time_update').select_related('category')
+        )
+        return queryset
 
 
 class ProductDetailView(MenuMixin, DetailView):
@@ -85,13 +99,16 @@ class ProductDetailView(MenuMixin, DetailView):
 class ProductCreateView(LoginRequiredMixin, MenuMixin, VersionMixin, CreateView):
     model = Product
     form_class = AddProductForm
-    success_url = reverse_lazy('catalog:list_product')
     page_title = 'Добавить продукт'
     page_description = 'Здесь можно добавить новый продукт, чтобы он появился на сайте'
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+    def get_success_url(self):
+        cache.delete(settings.CACHE_PRODUCT_LIST)
+        return reverse('catalog:list_product')
 
 
 class ProductUpdateView(UserPassesTestMixin, MenuMixin, VersionMixin, UpdateView):
@@ -104,6 +121,7 @@ class ProductUpdateView(UserPassesTestMixin, MenuMixin, VersionMixin, UpdateView
         return Product.objects.filter(pk=self.kwargs['pk'])
 
     def get_success_url(self):
+        cache.delete(settings.CACHE_PRODUCT_LIST)
         return reverse('catalog:view_product', kwargs={'pk': self.object.pk})
 
     def test_func(self):
@@ -126,7 +144,6 @@ class ProductUpdateView(UserPassesTestMixin, MenuMixin, VersionMixin, UpdateView
 
 class ProductDeleteView(UserPassesTestMixin, MenuMixin, DeleteView):
     model = Product
-    success_url = reverse_lazy('catalog:list_product')
     page_title = 'Страница для удаление статьи'
 
     def test_func(self):
@@ -136,3 +153,7 @@ class ProductDeleteView(UserPassesTestMixin, MenuMixin, DeleteView):
             or self.request.user.has_perms(['catalog.delete_product'])
         )
         return check_perms
+
+    def get_success_url(self):
+        cache.delete(settings.CACHE_PRODUCT_LIST)
+        return reverse('catalog:list_product')

@@ -175,8 +175,33 @@ if DEBUG_EMAIL:
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# настройки редиректов
 LOGIN_REDIRECT_URL = 'catalog:home'
 LOGIN_URL = 'users:login'
 LOGOUT_REDIRECT_URL = 'users:login'
 
 AUTH_USER_MODEL = 'users.User'
+
+# настройки кеша
+CACHES_ENABLED = env.bool('CACHES_ENABLED', False)
+if CACHES_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': env.str('REDIS_LOCATION'),
+        }
+    }
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+
+CACHE_TIMEOUT: int = 60 * 5
+# кэш ключи для catalog
+CACHE_PRODUCT_LIST: str = 'product_list'
+CACHE_CATEGORY_LIST: str = 'category_list'
+CACHE_CATEGORY_PRODUCTS: str = 'category_products'
+# кэш ключи для blog
+CACHE_POST_LIST: str = 'post_list'

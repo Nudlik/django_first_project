@@ -21,13 +21,12 @@ def list_breaks(string: str):
 
 @register.inclusion_tag('catalog/includes/contact_info.html')
 def contact_info():
-    contacts = Contact.objects.filter(pk=1)
-
-    if contacts.exists():
+    contacts = Contact.objects.filter(pk=1).first()
+    if contacts:
         contact = (
-            ('Страна', contacts[0].city),
-            ('ИНН', contacts[0].inn),
-            ('Адрес', contacts[0].address),
+            ('Страна', contacts.city),
+            ('ИНН', contacts.inn),
+            ('Адрес', contacts.address),
         )
     else:
         contact = None
